@@ -93,6 +93,21 @@
 	margin-top: var( --fsnw-space-4 );
 }
 
+/* Adress-Feldzeilen (Straße/Hausnr. bzw. PLZ/Ort nebeneinander) */
+
+.fsnw-key-management .fsnw-km-field-row {
+	display: flex;
+	gap: var( --fsnw-space-3 );
+}
+
+.fsnw-key-management .fsnw-km-field-row > div {
+	flex: 1;
+}
+
+.fsnw-key-management .fsnw-km-field-row > .fsnw-km-field-row__wide {
+	flex: 3;
+}
+
 /* Dynamische Einzelschlüssel-Zeilen */
 
 .fsnw-key-management .fsnw-key-row {

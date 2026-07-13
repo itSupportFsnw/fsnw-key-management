@@ -196,8 +196,13 @@ class FrontendController {
 		$this->verify_request( 'fsnw_km_save_apartment' );
 
 		$apartment_id = absint( $_POST['apartment_id'] ?? 0 );
-		$label        = sanitize_text_field( wp_unslash( $_POST['label'] ?? '' ) );
-		$client_name  = sanitize_text_field( wp_unslash( $_POST['client_name'] ?? '' ) );
+		$address      = array(
+			'street'       => sanitize_text_field( wp_unslash( $_POST['street'] ?? '' ) ),
+			'house_number' => sanitize_text_field( wp_unslash( $_POST['house_number'] ?? '' ) ),
+			'zip'          => sanitize_text_field( wp_unslash( $_POST['zip'] ?? '' ) ),
+			'city'         => sanitize_text_field( wp_unslash( $_POST['city'] ?? '' ) ),
+			'unit'         => sanitize_text_field( wp_unslash( $_POST['unit'] ?? '' ) ),
+		);
 		$notes        = sanitize_textarea_field( wp_unslash( $_POST['notes'] ?? '' ) );
 		$status       = sanitize_key( $_POST['status'] ?? ApartmentService::STATUS_ACTIVE );
 
@@ -205,9 +210,9 @@ class FrontendController {
 			$service = new ApartmentService();
 
 			if ( $apartment_id > 0 ) {
-				$service->update( $apartment_id, $label, $client_name, $notes, $status );
+				$service->update( $apartment_id, $address, $notes, $status );
 			} else {
-				$service->create( $label, $client_name, $notes );
+				$service->create( $address, $notes );
 			}
 		} catch ( \InvalidArgumentException $exception ) {
 			$this->redirect_back( array( 'fsnw_error' => $exception->getMessage() ) );

@@ -136,11 +136,30 @@ $base_url = remove_query_arg( array( 'fsnw_edit_apartment', 'fsnw_edit_bundle', 
 				<input type="hidden" name="redirect_url" value="<?php echo esc_attr( $base_url ); ?>">
 				<input type="hidden" name="apartment_id" value="<?php echo esc_attr( (string) ( $edit_apartment['id'] ?? 0 ) ); ?>">
 
-				<label for="fsnw-apartment-label"><?php esc_html_e( 'Bezeichnung (Adresse / Wohnung)', 'fsnw-key-management' ); ?></label>
-				<input type="text" id="fsnw-apartment-label" name="label" required value="<?php echo esc_attr( $edit_apartment['label'] ?? '' ); ?>">
+				<div class="fsnw-km-field-row">
+					<div class="fsnw-km-field-row__wide">
+						<label for="fsnw-apartment-street"><?php esc_html_e( 'Straße', 'fsnw-key-management' ); ?></label>
+						<input type="text" id="fsnw-apartment-street" name="street" required value="<?php echo esc_attr( $edit_apartment['street'] ?? '' ); ?>">
+					</div>
+					<div>
+						<label for="fsnw-apartment-house-number"><?php esc_html_e( 'Hausnr.', 'fsnw-key-management' ); ?></label>
+						<input type="text" id="fsnw-apartment-house-number" name="house_number" required value="<?php echo esc_attr( $edit_apartment['house_number'] ?? '' ); ?>">
+					</div>
+				</div>
 
-				<label for="fsnw-apartment-client"><?php esc_html_e( 'Klient', 'fsnw-key-management' ); ?></label>
-				<input type="text" id="fsnw-apartment-client" name="client_name" value="<?php echo esc_attr( $edit_apartment['client_name'] ?? '' ); ?>">
+				<div class="fsnw-km-field-row">
+					<div>
+						<label for="fsnw-apartment-zip"><?php esc_html_e( 'PLZ', 'fsnw-key-management' ); ?></label>
+						<input type="text" id="fsnw-apartment-zip" name="zip" required value="<?php echo esc_attr( $edit_apartment['zip'] ?? '' ); ?>">
+					</div>
+					<div class="fsnw-km-field-row__wide">
+						<label for="fsnw-apartment-city"><?php esc_html_e( 'Ort', 'fsnw-key-management' ); ?></label>
+						<input type="text" id="fsnw-apartment-city" name="city" required value="<?php echo esc_attr( $edit_apartment['city'] ?? '' ); ?>">
+					</div>
+				</div>
+
+				<label for="fsnw-apartment-unit"><?php esc_html_e( 'Wohneinheit (optional)', 'fsnw-key-management' ); ?></label>
+				<input type="text" id="fsnw-apartment-unit" name="unit" value="<?php echo esc_attr( $edit_apartment['unit'] ?? '' ); ?>" placeholder="<?php esc_attr_e( 'z. B. WE 3 / 2. OG links', 'fsnw-key-management' ); ?>">
 
 				<label for="fsnw-apartment-notes"><?php esc_html_e( 'Notizen', 'fsnw-key-management' ); ?></label>
 				<textarea id="fsnw-apartment-notes" name="notes" rows="2"><?php echo esc_textarea( $edit_apartment['notes'] ?? '' ); ?></textarea>
@@ -226,9 +245,6 @@ $base_url = remove_query_arg( array( 'fsnw_edit_apartment', 'fsnw_edit_bundle', 
 			<div class="fsnw-km-apartment__head">
 				<div>
 					<h3><?php echo esc_html( $apartment['label'] ); ?></h3>
-					<?php if ( '' !== $apartment['client_name'] ) : ?>
-						<p class="fsnw-km-muted"><?php echo esc_html( $apartment['client_name'] ); ?></p>
-					<?php endif; ?>
 				</div>
 				<div class="fsnw-km-apartment__badges">
 					<span class="fsnw-badge fsnw-badge--available">

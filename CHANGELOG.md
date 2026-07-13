@@ -6,6 +6,16 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-07-13
+
+Changed
+
+- Wohnungs-Formular umgestellt (Nutzerfeedback): statt freier Bezeichnung + Klient
+  jetzt strukturierte Adressfelder Straße, Hausnummer, PLZ, Ort und Wohneinheit
+  (optional). Die Anzeige-Bezeichnung wird automatisch zusammengesetzt
+  ("Straße Nr., PLZ Ort – WE"); neue Spalten per dbDelta (DB-Version 0.2.0),
+  das Klient-Feld ist aus allen Oberflächen entfernt.
+
 ## [1.0.0] - 2026-07-13
 
 Added

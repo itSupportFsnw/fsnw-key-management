@@ -69,7 +69,7 @@ $base_url = remove_query_arg( array( 'fsnw_saved', 'fsnw_error' ), $current_url 
 
 						$is_last = ! empty( $inventory[ $apartment_id ]['last_available'] );
 						?>
-						<optgroup label="<?php echo esc_attr( $apartment['label'] . ( '' !== $apartment['client_name'] ? ' – ' . $apartment['client_name'] : '' ) ); ?>">
+						<optgroup label="<?php echo esc_attr( $apartment['label'] ); ?>">
 							<?php foreach ( $available_by_apartment[ $apartment_id ] as $bundle ) : ?>
 								<option value="<?php echo esc_attr( (string) $bundle['id'] ); ?>" data-last="<?php echo esc_attr( $is_last ? '1' : '0' ); ?>">
 									<?php echo esc_html( $bundle['label'] . ' (' . implode( ', ', $bundle['keys_list'] ) . ')' ); ?>

@@ -36,30 +36,27 @@ class ApartmentService {
 	}
 
 	/**
-	 * Legt eine neue Wohnung an.
+	 * Legt eine neue Wohnung an. Die Anzeige-Bezeichnung (label) wird
+	 * automatisch aus der Adresse zusammengesetzt.
 	 *
-	 * @param string $label       Bezeichnung (z. B. Adresse/Wohnungsnummer).
-	 * @param string $client_name Name des Klienten.
-	 * @param string $notes       Optionale Notizen.
-	 * @throws \InvalidArgumentException Wenn die Bezeichnung fehlt.
+	 * @param array<string, string> $address Adressfelder: street, house_number, zip, city, unit (optional).
+	 * @param string                $notes   Optionale Notizen.
+	 * @throws \InvalidArgumentException Wenn Pflicht-Adressfelder fehlen.
 	 */
-	public function create( string $label, string $client_name = '', string $notes = '' ): int {
-		$label = sanitize_text_field( $label );
-
-		if ( '' === $label ) {
-			throw new \InvalidArgumentException( esc_html__( 'Bitte eine Bezeichnung für die Wohnung angeben.', 'fsnw-key-management' ) );
-		}
-
-		$now = current_time( 'mysql' );
+	public function create( array $address, string $notes = '' ): int {
+		$fields = $this->sanitize_address( $address );
+		$now    = current_time( 'mysql' );
 
 		return $this->repository->insert(
-			array(
-				'label'       => $label,
-				'client_name' => sanitize_text_field( $client_name ),
-				'notes'       => sanitize_textarea_field( $notes ),
-				'status'      => self::STATUS_ACTIVE,
-				'created_at'  => $now,
-				'updated_at'  => $now,
+			array_merge(
+				$fields,
+				array(
+					'label'      => $this->compose_label( $fields ),
+					'notes'      => sanitize_textarea_field( $notes ),
+					'status'     => self::STATUS_ACTIVE,
+					'created_at' => $now,
+					'updated_at' => $now,
+				)
 			)
 		);
 	}
@@ -67,34 +64,70 @@ class ApartmentService {
 	/**
 	 * Aktualisiert eine Wohnung.
 	 *
-	 * @param int    $id          Wohnungs-ID.
-	 * @param string $label       Bezeichnung.
-	 * @param string $client_name Name des Klienten.
-	 * @param string $notes       Notizen.
-	 * @param string $status      active|inactive.
-	 * @throws \InvalidArgumentException Wenn die Wohnung nicht existiert oder die Bezeichnung fehlt.
+	 * @param int                   $id      Wohnungs-ID.
+	 * @param array<string, string> $address Adressfelder: street, house_number, zip, city, unit (optional).
+	 * @param string                $notes   Notizen.
+	 * @param string                $status  active|inactive.
+	 * @throws \InvalidArgumentException Wenn die Wohnung nicht existiert oder Pflicht-Adressfelder fehlen.
 	 */
-	public function update( int $id, string $label, string $client_name, string $notes, string $status ): bool {
+	public function update( int $id, array $address, string $notes, string $status ): bool {
 		if ( null === $this->repository->find( $id ) ) {
 			throw new \InvalidArgumentException( esc_html__( 'Wohnung nicht gefunden.', 'fsnw-key-management' ) );
 		}
 
-		$label = sanitize_text_field( $label );
-
-		if ( '' === $label ) {
-			throw new \InvalidArgumentException( esc_html__( 'Bitte eine Bezeichnung für die Wohnung angeben.', 'fsnw-key-management' ) );
-		}
+		$fields = $this->sanitize_address( $address );
 
 		return $this->repository->update(
 			$id,
-			array(
-				'label'       => $label,
-				'client_name' => sanitize_text_field( $client_name ),
-				'notes'       => sanitize_textarea_field( $notes ),
-				'status'      => self::STATUS_INACTIVE === $status ? self::STATUS_INACTIVE : self::STATUS_ACTIVE,
-				'updated_at'  => current_time( 'mysql' ),
+			array_merge(
+				$fields,
+				array(
+					'label'      => $this->compose_label( $fields ),
+					'notes'      => sanitize_textarea_field( $notes ),
+					'status'     => self::STATUS_INACTIVE === $status ? self::STATUS_INACTIVE : self::STATUS_ACTIVE,
+					'updated_at' => current_time( 'mysql' ),
+				)
 			)
 		);
+	}
+
+	/**
+	 * Bereinigt die Adressfelder und prüft die Pflichtangaben.
+	 *
+	 * @param array<string, string> $address Rohe Adressfelder.
+	 * @return array<string, string>
+	 * @throws \InvalidArgumentException Wenn Straße, Hausnummer, PLZ oder Ort fehlen.
+	 */
+	private function sanitize_address( array $address ): array {
+		$fields = array(
+			'street'       => sanitize_text_field( $address['street'] ?? '' ),
+			'house_number' => sanitize_text_field( $address['house_number'] ?? '' ),
+			'zip'          => sanitize_text_field( $address['zip'] ?? '' ),
+			'city'         => sanitize_text_field( $address['city'] ?? '' ),
+			'unit'         => sanitize_text_field( $address['unit'] ?? '' ),
+		);
+
+		if ( '' === $fields['street'] || '' === $fields['house_number'] || '' === $fields['zip'] || '' === $fields['city'] ) {
+			throw new \InvalidArgumentException( esc_html__( 'Bitte Straße, Hausnummer, PLZ und Ort angeben.', 'fsnw-key-management' ) );
+		}
+
+		return $fields;
+	}
+
+	/**
+	 * Setzt die Anzeige-Bezeichnung aus der Adresse zusammen,
+	 * z. B. "Musterstraße 12, 44135 Dortmund – WE 3".
+	 *
+	 * @param array<string, string> $fields Bereinigte Adressfelder.
+	 */
+	private function compose_label( array $fields ): string {
+		$label = $fields['street'] . ' ' . $fields['house_number'] . ', ' . $fields['zip'] . ' ' . $fields['city'];
+
+		if ( '' !== $fields['unit'] ) {
+			$label .= ' – ' . $fields['unit'];
+		}
+
+		return $label;
 	}
 
 	/**
