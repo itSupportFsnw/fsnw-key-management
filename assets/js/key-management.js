@@ -1,7 +1,55 @@
+/* global fsnwKeyManagement */
 ( function () {
 	'use strict';
 
 	document.addEventListener( 'DOMContentLoaded', function () {
+		// Ausgabe-Seite: Live-Polling auf das Watch-Signal - ändert sich der
+		// Fingerabdruck der offenen Ausgaben (z. B. Unterschrift am Tablet),
+		// lädt die Seite neu. Kein Reload, solange gerade ein Formularfeld
+		// fokussiert ist, damit keine Eingaben verloren gehen.
+		var dispatchRoot = document.querySelector( '.fsnw-key-management--dispatch' );
+
+		if ( dispatchRoot && 'undefined' !== typeof fsnwKeyManagement ) {
+			var lastSignal = null;
+
+			var isTyping = function () {
+				var active = document.activeElement;
+
+				return active && dispatchRoot.contains( active ) &&
+					( 'INPUT' === active.tagName || 'TEXTAREA' === active.tagName || 'SELECT' === active.tagName );
+			};
+
+			var fetchSignal = function () {
+				fetch( fsnwKeyManagement.watchSignalUrl + '?_=' + Date.now(), {
+					credentials: 'same-origin',
+					cache: 'no-store',
+					headers: { 'X-WP-Nonce': fsnwKeyManagement.nonce },
+				} )
+					.then( function ( response ) {
+						if ( ! response.ok ) {
+							throw new Error( 'HTTP ' + response.status );
+						}
+
+						return response.json();
+					} )
+					.then( function ( data ) {
+						if ( null === lastSignal ) {
+							lastSignal = data.signal;
+							return;
+						}
+
+						if ( data.signal !== lastSignal && ! isTyping() ) {
+							window.location.reload();
+						}
+					} )
+					.catch( function () {
+						// Stiller Fehlversuch - beim nächsten Tick wird erneut gepollt.
+					} );
+			};
+
+			fetchSignal();
+			setInterval( fetchSignal, 3000 );
+		}
 		// Erfolgs-/Fehlermeldungen nur kurz anzeigen und die auslösenden
 		// URL-Parameter entfernen, damit ein Reload sie nicht erneut zeigt.
 		var notices = document.querySelectorAll( '.fsnw-key-management .fsnw-notice' );

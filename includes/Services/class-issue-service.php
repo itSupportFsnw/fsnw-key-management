@@ -406,6 +406,25 @@ class IssueService {
 	}
 
 	/**
+	 * Liefert einen Fingerabdruck der offenen Ausgaben, damit die Ausgabe-Seite
+	 * per Polling erkennen kann, ob sich etwas geändert hat (z. B. Unterschrift
+	 * am Tablet), ohne bei jedem Tick die komplette Übersicht zu übertragen.
+	 */
+	public function get_watch_signal(): string {
+		$fingerprint = array();
+
+		foreach ( array( self::STATUS_AWAITING_SIGNATURE, self::STATUS_ISSUED ) as $status ) {
+			foreach ( $this->repository->list_by_status( $status ) as $issue ) {
+				$fingerprint[] = $issue['id'] . ':' . $issue['status'] . ':' . $issue['updated_at'];
+			}
+		}
+
+		sort( $fingerprint );
+
+		return md5( implode( '|', $fingerprint ) );
+	}
+
+	/**
 	 * Listet Ausgaben eines Status, angereichert um Bund-/Wohnungs-/Nutzerdaten.
 	 *
 	 * @param string $status Ausgabe-Status.

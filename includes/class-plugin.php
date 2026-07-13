@@ -44,6 +44,12 @@ class Plugin {
 		Activator::maybe_upgrade();
 
 		add_action( 'init', array( $this, 'load_textdomain' ) );
+		add_action(
+			'rest_api_init',
+			static function (): void {
+				( new Rest\DispatchController() )->register_routes();
+			}
+		);
 
 		( new \FsnwKeyManagement\Admin\AdminController() )->init();
 		( new \FsnwKeyManagement\Frontend\FrontendController() )->init();

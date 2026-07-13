@@ -68,6 +68,7 @@
 }
 
 .fsnw-key-management .fsnw-km-form-card input[type="text"],
+.fsnw-key-management .fsnw-km-form-card input[type="search"],
 .fsnw-key-management .fsnw-km-form-card select,
 .fsnw-key-management .fsnw-km-form-card textarea {
 	width: 100%;
@@ -80,6 +81,7 @@
 }
 
 .fsnw-key-management .fsnw-km-form-card input:focus-visible,
+.fsnw-key-management .fsnw-km-form-card input[type="search"]:focus-visible,
 .fsnw-key-management .fsnw-km-form-card select:focus-visible,
 .fsnw-key-management .fsnw-km-form-card textarea:focus-visible {
 	outline: none;

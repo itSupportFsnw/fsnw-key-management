@@ -3,7 +3,7 @@
  * Plugin Name:       FSNW Key Management
  * Plugin URI:        https://github.com/itSupportFsnw/fsnw-key-management
  * Description:       Schlüsselverwaltung für Klienten-Wohnungen: Inventar der Schlüsselbunde im zentralen Schlüsselkasten, Ausgabe an Mitarbeiter mit Tablet-Unterschrift (via FSNW Signature Kiosk), Rückgabe- und Verlust-Verwaltung.
- * Version:           1.4.0
+ * Version:           1.4.1
  * Requires at least: 6.4
  * Requires PHP:      8.0
  * Author:            freestyle Jugendhilfe gGmbh
@@ -18,7 +18,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'FSNW_KEY_MANAGEMENT_VERSION', '1.4.0' );
+define( 'FSNW_KEY_MANAGEMENT_VERSION', '1.4.1' );
 define( 'FSNW_KEY_MANAGEMENT_DB_VERSION', '0.2.0' );
 define( 'FSNW_KEY_MANAGEMENT_PLUGIN_FILE', __FILE__ );
 define( 'FSNW_KEY_MANAGEMENT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );

@@ -6,6 +6,19 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-07-13
+
+Fixed
+
+- Ausgabe-Seite aktualisiert sich jetzt selbst, sobald am Tablet unterschrieben
+  wurde: neuer REST-Endpunkt `GET /dispatch/watch-signal` (Capability-geschützt)
+  liefert einen Fingerabdruck der offenen Ausgaben, die Seite pollt alle 3 s und
+  lädt bei Änderung neu — außer während gerade in ein Formularfeld getippt wird
+  (keine Eingabeverluste). Gleiches Muster wie in wp-fsnw-car-rent.
+- Suchfelder der Inventar-Übersicht und der Schlüsselliste sahen ungestylt aus:
+  `input[type="search"]` fehlte in den Formular-Styles und erbt jetzt dasselbe
+  Aussehen wie die Such-Dropdowns.
+
 ## [1.4.0] - 2026-07-13
 
 Changed

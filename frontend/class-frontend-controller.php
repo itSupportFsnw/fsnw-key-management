@@ -236,6 +236,14 @@ class FrontendController {
 		wp_enqueue_style( 'fsnw-key-management-base', FSNW_KEY_MANAGEMENT_PLUGIN_URL . 'assets/css/base.css', array( 'fsnw-key-management-tokens' ), FSNW_KEY_MANAGEMENT_VERSION );
 		wp_enqueue_style( 'fsnw-key-management', FSNW_KEY_MANAGEMENT_PLUGIN_URL . 'assets/css/key-management.css', array( 'fsnw-key-management-tokens', 'fsnw-key-management-base' ), FSNW_KEY_MANAGEMENT_VERSION );
 		wp_enqueue_script( 'fsnw-key-management', FSNW_KEY_MANAGEMENT_PLUGIN_URL . 'assets/js/key-management.js', array(), FSNW_KEY_MANAGEMENT_VERSION, true );
+		wp_localize_script(
+			'fsnw-key-management',
+			'fsnwKeyManagement',
+			array(
+				'watchSignalUrl' => rest_url( 'fsnw-key-management/v1/dispatch/watch-signal' ),
+				'nonce'          => wp_create_nonce( 'wp_rest' ),
+			)
+		);
 	}
 
 	/**
