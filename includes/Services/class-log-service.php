@@ -60,8 +60,26 @@ class LogService {
 	 * @return array<int, array<string, mixed>>
 	 */
 	public function list_by_bundle( int $bundle_id ): array {
-		$entries = $this->repository->list_by_bundle( $bundle_id );
+		return $this->decode_entries( $this->repository->list_by_bundle( $bundle_id ) );
+	}
 
+	/**
+	 * Liefert die gesammelte Historie mehrerer Bunde (Meta dekodiert), neueste zuerst.
+	 *
+	 * @param int[] $bundle_ids Bund-IDs.
+	 * @return array<int, array<string, mixed>>
+	 */
+	public function list_by_bundles( array $bundle_ids ): array {
+		return $this->decode_entries( $this->repository->list_by_bundles( $bundle_ids ) );
+	}
+
+	/**
+	 * Dekodiert die Meta-Spalten einer Ergebnisliste.
+	 *
+	 * @param array<int, array<string, mixed>> $entries Rohe Datenbankzeilen.
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function decode_entries( array $entries ): array {
 		foreach ( $entries as &$entry ) {
 			$meta          = empty( $entry['meta'] ) ? array() : json_decode( (string) $entry['meta'], true );
 			$entry['meta'] = is_array( $meta ) ? $meta : array();

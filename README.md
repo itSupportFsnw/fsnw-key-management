@@ -26,7 +26,8 @@ Ausgabe-Unterschrift (Integration nach dessen `docs/integration.md`, source
 | Shortcode | Seite |
 | --- | --- |
 | `[wp_fsnw_key_dispatch]` | Ausgabe-Arbeitsplatz: ausgeben (Tablet-Unterschrift), abbrechen, Rückgabe, Verlust |
-| `[wp_fsnw_key_manage]` | Verwaltung: Wohnungen/Bunde anlegen und bearbeiten, Inventar, Verlust/Ausmustern/Reaktivieren, Historie |
+| `[wp_fsnw_key_manage]` | Verwaltung: Wohnungen/Bunde anlegen und bearbeiten, Inventar, Verlust/Ausmustern/Reaktivieren, Historie (je Bund und je Wohnung) |
+| `[wp_fsnw_key_list]` | Lese-Übersicht für alle angemeldeten Mitarbeiter (nur Login nötig): Wohnung, Schlüssel-Nr. (Bund-Kennung vor dem ersten Minus), Verfügbarkeit |
 
 ## Ablauf einer Ausgabe
 

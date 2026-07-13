@@ -6,6 +6,20 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-07-13
+
+Added
+
+- Wohnungs-Historie: "Historie"-Button je Wohnung öffnet ein Popup mit der
+  gesammelten Historie aller Bunde der Wohnung (inkl. Bund-Spalte).
+- Neue Mitarbeiter-Seite `[wp_fsnw_key_list]` (Zugriff: nur Login, keine
+  Verwaltungs-Capability): durchsuchbare Lese-Übersicht mit Wohnung,
+  Schlüssel-Nr. und Verfügbarkeit ("X von Y im Schrank") — damit Mitarbeiter
+  der Ausgabe sagen können, welchen Bund sie brauchen. Als Schlüssel-Nr. wird
+  die Bund-Kennung vor dem ersten Minus angezeigt (der Rest der Bezeichnung
+  ist für die Übersicht nicht relevant); verlorene/ausgemusterte Bunde
+  erscheinen nicht.
+
 ## [1.2.0] - 2026-07-13
 
 Changed

@@ -46,6 +46,40 @@ class FrontendController {
 	public function register_shortcodes(): void {
 		add_shortcode( 'wp_fsnw_key_manage', array( $this, 'render_manage_shortcode' ) );
 		add_shortcode( 'wp_fsnw_key_dispatch', array( $this, 'render_dispatch_shortcode' ) );
+		add_shortcode( 'wp_fsnw_key_list', array( $this, 'render_list_shortcode' ) );
+	}
+
+	/**
+	 * [wp_fsnw_key_list] - Lese-Übersicht für alle Mitarbeiter: welche Bunde
+	 * gibt es je Wohnung und wie viele hängen im Schrank. Zeigt nur die
+	 * Bund-Kennung vor dem ersten Minus (der Rest ist für die Übersicht
+	 * nicht relevant). Zugriff: Login genügt, keine Verwaltungs-Capability.
+	 */
+	public function render_list_shortcode(): string {
+		if ( ! is_user_logged_in() ) {
+			return '<p>' . sprintf(
+				/* translators: %s: Login-URL. */
+				wp_kses_post( __( 'Bitte <a href="%s">anmelden</a>, um die Schlüsselliste zu sehen.', 'fsnw-key-management' ) ),
+				esc_url( wp_login_url( home_url( add_query_arg( null, null ) ) ) )
+			) . '</p>';
+		}
+
+		$apartment_service = new ApartmentService();
+		$bundle_service    = new BundleService();
+		$inventory_service = new InventoryService();
+
+		$apartments = $apartment_service->list( true );
+		$inventory  = $inventory_service->overview( $apartments );
+
+		$bundles_by_apartment = array();
+		foreach ( $apartments as $apartment ) {
+			$bundles_by_apartment[ (int) $apartment['id'] ] = $bundle_service->list_by_apartment( (int) $apartment['id'] );
+		}
+
+		ob_start();
+		include FSNW_KEY_MANAGEMENT_PLUGIN_DIR . 'templates/frontend/list-page.php';
+
+		return (string) ob_get_clean();
 	}
 
 	/**
@@ -139,11 +173,12 @@ class FrontendController {
 			$bundles_by_apartment[ (int) $apartment['id'] ] = $bundle_service->list_by_apartment( (int) $apartment['id'] );
 		}
 
-		// Vorbelegung für Bearbeiten-Modus (per GET-Parameter angefordert).
-		$edit_apartment = null;
-		$edit_bundle    = null;
-		$history        = null;
-		$history_bundle = null;
+		// Vorbelegung für Bearbeiten-/Historie-Modus (per GET-Parameter angefordert).
+		$edit_apartment    = null;
+		$edit_bundle       = null;
+		$history           = null;
+		$history_bundle    = null;
+		$history_apartment = null;
 
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Nur lesende Vorbelegung, keine Zustandsänderung.
 		if ( ! empty( $_GET['fsnw_edit_apartment'] ) ) {
@@ -158,11 +193,22 @@ class FrontendController {
 			$history_bundle = $bundle_service->find( absint( $_GET['fsnw_history'] ) );
 			$history        = null === $history_bundle ? null : ( new LogService() )->list_by_bundle( (int) $history_bundle['id'] );
 		}
+
+		if ( ! empty( $_GET['fsnw_apartment_history'] ) ) {
+			$history_apartment = $apartment_service->find( absint( $_GET['fsnw_apartment_history'] ) );
+
+			if ( null !== $history_apartment ) {
+				$apartment_bundles = $bundles_by_apartment[ (int) $history_apartment['id'] ] ?? array();
+				$history           = ( new LogService() )->list_by_bundles( array_map( 'intval', wp_list_pluck( $apartment_bundles, 'id' ) ) );
+			}
+		}
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		$current_url = home_url( add_query_arg( null, null ) );
 
 		ob_start();
+		unset( $apartment_bundles );
+
 		include FSNW_KEY_MANAGEMENT_PLUGIN_DIR . 'templates/frontend/manage-page.php';
 
 		return (string) ob_get_clean();
@@ -181,6 +227,7 @@ class FrontendController {
 		if (
 			! has_shortcode( $post->post_content, 'wp_fsnw_key_manage' )
 			&& ! has_shortcode( $post->post_content, 'wp_fsnw_key_dispatch' )
+			&& ! has_shortcode( $post->post_content, 'wp_fsnw_key_list' )
 		) {
 			return;
 		}

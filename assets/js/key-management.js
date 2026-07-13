@@ -66,6 +66,31 @@
 			}
 		} );
 
+		// Schlüsselliste (Mitarbeiter-Ansicht): Live-Filter über die Tabellenzeilen.
+		var listSearch = document.getElementById( 'fsnw-key-list-search' );
+		var listTable = document.getElementById( 'fsnw-key-list-table' );
+		var listEmpty = document.getElementById( 'fsnw-key-list-empty' );
+
+		if ( listSearch && listTable ) {
+			listSearch.addEventListener( 'input', function () {
+				var query = listSearch.value.toLowerCase();
+				var visible = 0;
+
+				listTable.querySelectorAll( 'tbody tr' ).forEach( function ( row ) {
+					var match = -1 !== row.textContent.toLowerCase().indexOf( query );
+					row.classList.toggle( 'fsnw-hidden', ! match );
+
+					if ( match ) {
+						visible += 1;
+					}
+				} );
+
+				if ( listEmpty ) {
+					listEmpty.classList.toggle( 'fsnw-hidden', visible > 0 );
+				}
+			} );
+		}
+
 		// Bearbeiten-/Historie-Popup: Klick auf den Hintergrund oder Escape
 		// schließt das Modal (Navigation zurück zur Seite ohne GET-Parameter).
 		var overlay = document.querySelector( '.fsnw-km-modal-overlay' );

@@ -61,4 +61,26 @@ class LogRepository {
 			ARRAY_A
 		);
 	}
+
+	/**
+	 * Listet die gesammelte Historie mehrerer Bunde, neueste zuerst.
+	 *
+	 * @param int[] $bundle_ids Bund-IDs.
+	 * @return array<int, array<string, mixed>>
+	 */
+	public function list_by_bundles( array $bundle_ids ): array {
+		if ( empty( $bundle_ids ) ) {
+			return array();
+		}
+
+		$placeholders = implode( ', ', array_fill( 0, count( $bundle_ids ), '%d' ) );
+
+		return (array) $this->wpdb->get_results(
+			$this->wpdb->prepare(
+				"SELECT * FROM %i WHERE bundle_id IN ({$placeholders}) ORDER BY created_at DESC, id DESC", // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+				array_merge( array( $this->table ), array_map( 'intval', $bundle_ids ) )
+			),
+			ARRAY_A
+		);
+	}
 }

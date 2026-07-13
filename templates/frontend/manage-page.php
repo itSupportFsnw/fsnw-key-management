@@ -46,7 +46,15 @@ foreach ( $apartments as $apartment ) {
 	}
 }
 
-$base_url = remove_query_arg( array( 'fsnw_edit_apartment', 'fsnw_edit_bundle', 'fsnw_history', 'fsnw_saved', 'fsnw_error' ), $current_url );
+$base_url = remove_query_arg( array( 'fsnw_edit_apartment', 'fsnw_edit_bundle', 'fsnw_history', 'fsnw_apartment_history', 'fsnw_saved', 'fsnw_error' ), $current_url );
+
+// Bund-Labels für die Wohnungs-Historie (Zuordnung bundle_id → Label).
+$bundle_labels = array();
+foreach ( $bundles_by_apartment as $apartment_bundle_list ) {
+	foreach ( $apartment_bundle_list as $labelled_bundle ) {
+		$bundle_labels[ (int) $labelled_bundle['id'] ] = $labelled_bundle['label'];
+	}
+}
 
 /**
  * Rendert die Adressfelder des Wohnungs-Formulars (Anlegen und Bearbeiten).
@@ -233,6 +241,9 @@ $render_key_fields = static function ( array $keys ): void {
 					<?php if ( 'inactive' === $apartment['status'] ) : ?>
 						<span class="fsnw-badge fsnw-badge--inactive"><?php esc_html_e( 'Inaktiv', 'fsnw-key-management' ); ?></span>
 					<?php endif; ?>
+					<a class="fsnw-btn fsnw-btn--ghost fsnw-btn--small" href="<?php echo esc_url( add_query_arg( 'fsnw_apartment_history', $apartment_id, $base_url ) ); ?>">
+						<?php esc_html_e( 'Historie', 'fsnw-key-management' ); ?>
+					</a>
 					<a class="fsnw-btn fsnw-btn--secondary fsnw-btn--small" href="<?php echo esc_url( add_query_arg( 'fsnw_edit_apartment', $apartment_id, $base_url ) ); ?>">
 						<?php esc_html_e( 'Bearbeiten', 'fsnw-key-management' ); ?>
 					</a>
@@ -368,6 +379,64 @@ $render_key_fields = static function ( array $keys ): void {
 						<a class="fsnw-btn fsnw-btn--ghost" href="<?php echo esc_url( $base_url ); ?>"><?php esc_html_e( 'Abbrechen', 'fsnw-key-management' ); ?></a>
 					</div>
 				</form>
+			</div>
+		</div>
+	<?php endif; ?>
+
+	<?php if ( null !== $history_apartment && null !== $history ) : ?>
+		<div class="fsnw-km-modal-overlay" data-close-url="<?php echo esc_attr( $base_url ); ?>">
+			<div class="fsnw-card fsnw-km-modal fsnw-km-modal--wide" role="dialog" aria-modal="true">
+				<div class="fsnw-km-modal__head">
+					<h2>
+						<?php
+						printf(
+							/* translators: %s: Bezeichnung der Wohnung. */
+							esc_html__( 'Historie: %s', 'fsnw-key-management' ),
+							esc_html( $history_apartment['label'] )
+						);
+						?>
+					</h2>
+					<a class="fsnw-km-modal__close" href="<?php echo esc_url( $base_url ); ?>" aria-label="<?php esc_attr_e( 'Schließen', 'fsnw-key-management' ); ?>">&times;</a>
+				</div>
+				<?php if ( empty( $history ) ) : ?>
+					<p><?php esc_html_e( 'Noch keine Einträge.', 'fsnw-key-management' ); ?></p>
+				<?php else : ?>
+					<table class="fsnw-table">
+						<thead>
+							<tr>
+								<th><?php esc_html_e( 'Zeitpunkt', 'fsnw-key-management' ); ?></th>
+								<th><?php esc_html_e( 'Bund', 'fsnw-key-management' ); ?></th>
+								<th><?php esc_html_e( 'Aktion', 'fsnw-key-management' ); ?></th>
+								<th><?php esc_html_e( 'Nutzer', 'fsnw-key-management' ); ?></th>
+								<th><?php esc_html_e( 'Details', 'fsnw-key-management' ); ?></th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php foreach ( $history as $entry ) : ?>
+								<?php $entry_user = $entry['user_id'] ? get_userdata( (int) $entry['user_id'] ) : null; ?>
+								<tr>
+									<td><?php echo esc_html( date_i18n( 'd.m.Y H:i', strtotime( $entry['created_at'] ) ) ); ?></td>
+									<td><?php echo esc_html( $bundle_labels[ (int) $entry['bundle_id'] ] ?? ( '#' . $entry['bundle_id'] ) ); ?></td>
+									<td><?php echo esc_html( $entry['action'] ); ?></td>
+									<td><?php echo esc_html( $entry_user ? $entry_user->display_name : '—' ); ?></td>
+									<td>
+										<?php if ( empty( $entry['meta'] ) ) : ?>
+											&mdash;
+										<?php else : ?>
+											<code>
+												<?php
+												foreach ( $entry['meta'] as $meta_key => $meta_value ) {
+													echo esc_html( $meta_key . ': ' . ( is_scalar( $meta_value ) ? (string) $meta_value : wp_json_encode( $meta_value ) ) ) . '<br>';
+												}
+												?>
+											</code>
+										<?php endif; ?>
+									</td>
+								</tr>
+							<?php endforeach; ?>
+						</tbody>
+					</table>
+				<?php endif; ?>
 			</div>
 		</div>
 	<?php endif; ?>
