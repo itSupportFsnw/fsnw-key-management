@@ -32,6 +32,7 @@ class FrontendController {
 		add_action( 'admin_post_fsnw_km_save_apartment', array( $this, 'handle_save_apartment' ) );
 		add_action( 'admin_post_fsnw_km_save_bundle', array( $this, 'handle_save_bundle' ) );
 		add_action( 'admin_post_fsnw_km_bundle_status', array( $this, 'handle_bundle_status' ) );
+		add_action( 'admin_post_fsnw_km_bundle_clone', array( $this, 'handle_bundle_clone' ) );
 		add_action( 'admin_post_fsnw_km_issue_start', array( $this, 'handle_issue_start' ) );
 		add_action( 'admin_post_fsnw_km_issue_abort', array( $this, 'handle_issue_abort' ) );
 		add_action( 'admin_post_fsnw_km_issue_return', array( $this, 'handle_issue_return' ) );
@@ -274,6 +275,21 @@ class FrontendController {
 
 		try {
 			( new BundleService() )->change_status( $bundle_id, $target, $actions[ $target ] );
+		} catch ( \InvalidArgumentException $exception ) {
+			$this->redirect_back( array( 'fsnw_error' => $exception->getMessage() ) );
+		}
+
+		$this->redirect_back( array( 'fsnw_saved' => '1' ) );
+	}
+
+	/**
+	 * Dupliziert einen Schlüsselbund (identische Kopie als neuer verfügbarer Bund).
+	 */
+	public function handle_bundle_clone(): void {
+		$this->verify_request( 'fsnw_km_bundle_clone' );
+
+		try {
+			( new BundleService() )->duplicate( absint( $_POST['bundle_id'] ?? 0 ) );
 		} catch ( \InvalidArgumentException $exception ) {
 			$this->redirect_back( array( 'fsnw_error' => $exception->getMessage() ) );
 		}

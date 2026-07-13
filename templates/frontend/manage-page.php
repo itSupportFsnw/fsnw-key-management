@@ -159,13 +159,18 @@ $render_key_fields = static function ( array $keys ): void {
 				<input type="hidden" name="redirect_url" value="<?php echo esc_attr( $base_url ); ?>">
 				<input type="hidden" name="bundle_id" value="0">
 
-				<label for="fsnw-bundle-apartment"><?php esc_html_e( 'Wohnung', 'fsnw-key-management' ); ?></label>
-				<select id="fsnw-bundle-apartment" name="apartment_id" required>
-					<option value=""><?php esc_html_e( 'Bitte wählen …', 'fsnw-key-management' ); ?></option>
-					<?php foreach ( $apartments as $apartment ) : ?>
-						<option value="<?php echo esc_attr( (string) $apartment['id'] ); ?>"><?php echo esc_html( $apartment['label'] ); ?></option>
-					<?php endforeach; ?>
-				</select>
+				<label for="fsnw-bundle-apartment-search"><?php esc_html_e( 'Wohnung (suchen)', 'fsnw-key-management' ); ?></label>
+				<div class="fsnw-combobox">
+					<input type="text" id="fsnw-bundle-apartment-search" class="fsnw-combobox__input" autocomplete="off" placeholder="<?php esc_attr_e( 'Straße oder Ort tippen …', 'fsnw-key-management' ); ?>">
+					<input type="hidden" name="apartment_id">
+					<ul class="fsnw-combobox__list fsnw-hidden">
+						<?php foreach ( $apartments as $apartment ) : ?>
+							<li data-value="<?php echo esc_attr( (string) $apartment['id'] ); ?>" data-label="<?php echo esc_attr( $apartment['label'] ); ?>">
+								<?php echo esc_html( $apartment['label'] ); ?>
+							</li>
+						<?php endforeach; ?>
+					</ul>
+				</div>
 
 				<label for="fsnw-bundle-label"><?php esc_html_e( 'Bezeichnung (z. B. Bund A / Haken-Nr.)', 'fsnw-key-management' ); ?></label>
 				<input type="text" id="fsnw-bundle-label" name="label" required>
@@ -264,6 +269,13 @@ $render_key_fields = static function ( array $keys ): void {
 									<a class="fsnw-btn fsnw-btn--ghost fsnw-btn--small" href="<?php echo esc_url( add_query_arg( 'fsnw_history', $bundle['id'], $base_url ) ); ?>">
 										<?php esc_html_e( 'Historie', 'fsnw-key-management' ); ?>
 									</a>
+									<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="fsnw-km-inline-form">
+										<?php wp_nonce_field( 'fsnw_km_bundle_clone' ); ?>
+										<input type="hidden" name="action" value="fsnw_km_bundle_clone">
+										<input type="hidden" name="redirect_url" value="<?php echo esc_attr( $base_url ); ?>">
+										<input type="hidden" name="bundle_id" value="<?php echo esc_attr( (string) $bundle['id'] ); ?>">
+										<button type="submit" class="fsnw-btn fsnw-btn--ghost fsnw-btn--small"><?php esc_html_e( 'Duplizieren', 'fsnw-key-management' ); ?></button>
+									</form>
 									<?php if ( BundleService::STATUS_AVAILABLE === $bundle['status'] ) : ?>
 										<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="fsnw-km-inline-form" onsubmit="return confirm('<?php echo esc_js( __( 'Bund wirklich als verloren markieren?', 'fsnw-key-management' ) ); ?>');">
 											<?php wp_nonce_field( 'fsnw_km_bundle_status' ); ?>

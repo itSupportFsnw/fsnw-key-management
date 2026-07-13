@@ -117,6 +117,29 @@ class BundleService {
 	}
 
 	/**
+	 * Dupliziert einen Bund (die Bunde einer Wohnung sind untereinander
+	 * identisch) als neuen, verfügbaren Bund mit "(Kopie)"-Suffix.
+	 *
+	 * @param int $id Bund-ID der Vorlage.
+	 * @return int Die ID des neuen Bundes.
+	 * @throws \InvalidArgumentException Wenn die Vorlage nicht existiert.
+	 */
+	public function duplicate( int $id ): int {
+		$source = $this->find( $id );
+
+		if ( null === $source ) {
+			throw new \InvalidArgumentException( esc_html__( 'Schlüsselbund nicht gefunden.', 'fsnw-key-management' ) );
+		}
+
+		return $this->create(
+			(int) $source['apartment_id'],
+			$source['label'] . ' ' . __( '(Kopie)', 'fsnw-key-management' ),
+			$source['keys_list'],
+			(string) ( $source['notes'] ?? '' )
+		);
+	}
+
+	/**
 	 * Wechselt den Status eines Bundes und schreibt die Historie.
 	 *
 	 * Erlaubte manuelle Wechsel (Verwaltungs-Seite):

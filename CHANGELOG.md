@@ -6,6 +6,24 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-07-13
+
+Changed
+
+- Ausgabe-Seite: Die Bund-Auswahl ist jetzt ein Suchfeld (tippen filtert live
+  nach Straße, Ort oder Bund-Bezeichnung; Einzelschlüssel als Zusatzzeile je
+  Treffer) statt eines langen Dropdowns — wichtig bei ~200 Wohnungen. Die
+  Letzter-Bund-Warnung funktioniert weiterhin.
+- Verwaltungs-Seite: Auch die Wohnungs-Auswahl beim Bund-Anlegen ist ein
+  Suchfeld. Ohne gültige Auswahl aus der Liste lässt sich das Formular nicht
+  absenden (rote Markierung).
+
+Added
+
+- "Duplizieren"-Aktion je Schlüsselbund: legt eine identische Kopie (gleiche
+  Einzelschlüssel, Suffix "(Kopie)") als neuen verfügbaren Bund an — für den
+  Normalfall, dass die Bunde einer Wohnung exakt gleich sind.
+
 ## [1.1.0] - 2026-07-13
 
 Added

@@ -56,28 +56,34 @@ $base_url = remove_query_arg( array( 'fsnw_saved', 'fsnw_error' ), $current_url 
 				<input type="hidden" name="action" value="fsnw_km_issue_start">
 				<input type="hidden" name="redirect_url" value="<?php echo esc_attr( $base_url ); ?>">
 
-				<label for="fsnw-issue-bundle"><?php esc_html_e( 'Schlüsselbund', 'fsnw-key-management' ); ?></label>
-				<select id="fsnw-issue-bundle" name="bundle_id" required>
-					<option value=""><?php esc_html_e( 'Bitte wählen …', 'fsnw-key-management' ); ?></option>
-					<?php foreach ( $apartments as $apartment ) : ?>
-						<?php
-						$apartment_id = (int) $apartment['id'];
+				<label for="fsnw-issue-bundle-search"><?php esc_html_e( 'Schlüsselbund (Wohnung suchen)', 'fsnw-key-management' ); ?></label>
+				<div class="fsnw-combobox">
+					<input type="text" id="fsnw-issue-bundle-search" class="fsnw-combobox__input" autocomplete="off" placeholder="<?php esc_attr_e( 'Straße, Ort oder Bund tippen …', 'fsnw-key-management' ); ?>">
+					<input type="hidden" name="bundle_id" id="fsnw-issue-bundle-id">
+					<ul class="fsnw-combobox__list fsnw-hidden">
+						<?php foreach ( $apartments as $apartment ) : ?>
+							<?php
+							$apartment_id = (int) $apartment['id'];
 
-						if ( empty( $available_by_apartment[ $apartment_id ] ) ) {
-							continue;
-						}
+							if ( empty( $available_by_apartment[ $apartment_id ] ) ) {
+								continue;
+							}
 
-						$is_last = ! empty( $inventory[ $apartment_id ]['last_available'] );
-						?>
-						<optgroup label="<?php echo esc_attr( $apartment['label'] ); ?>">
+							$is_last = ! empty( $inventory[ $apartment_id ]['last_available'] );
+							?>
 							<?php foreach ( $available_by_apartment[ $apartment_id ] as $bundle ) : ?>
-								<option value="<?php echo esc_attr( (string) $bundle['id'] ); ?>" data-last="<?php echo esc_attr( $is_last ? '1' : '0' ); ?>">
-									<?php echo esc_html( $bundle['label'] . ' (' . implode( ', ', $bundle['keys_list'] ) . ')' ); ?>
-								</option>
+								<li
+									data-value="<?php echo esc_attr( (string) $bundle['id'] ); ?>"
+									data-last="<?php echo esc_attr( $is_last ? '1' : '0' ); ?>"
+									data-label="<?php echo esc_attr( $apartment['label'] . ' – ' . $bundle['label'] ); ?>"
+								>
+									<?php echo esc_html( $apartment['label'] . ' – ' . $bundle['label'] ); ?>
+									<span class="fsnw-combobox__hint"><?php echo esc_html( implode( ', ', $bundle['keys_list'] ) ); ?></span>
+								</li>
 							<?php endforeach; ?>
-						</optgroup>
-					<?php endforeach; ?>
-				</select>
+						<?php endforeach; ?>
+					</ul>
+				</div>
 
 				<div id="fsnw-last-bundle-warning" class="fsnw-last-bundle-warning fsnw-hidden">
 					<?php esc_html_e( 'Achtung: Das ist der letzte Bund dieser Wohnung im Schrank – Ausgabe nicht empfohlen.', 'fsnw-key-management' ); ?>

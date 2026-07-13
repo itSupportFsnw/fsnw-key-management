@@ -84,18 +84,95 @@
 			} );
 		}
 
+		// Suchfeld-Auswahl (Combobox): Text-Eingabe filtert die Liste, Klick auf
+		// einen Eintrag setzt das versteckte Wertefeld. Genutzt für die
+		// Bund-Auswahl bei der Ausgabe und die Wohnungs-Auswahl beim Bund-Anlegen.
+		document.querySelectorAll( '.fsnw-combobox' ).forEach( function ( combobox ) {
+			var input = combobox.querySelector( '.fsnw-combobox__input' );
+			var hidden = combobox.querySelector( 'input[type="hidden"]' );
+			var list = combobox.querySelector( '.fsnw-combobox__list' );
+			var items = list.querySelectorAll( 'li' );
+
+			var clearSelection = function () {
+				hidden.value = '';
+				delete hidden.dataset.last;
+				hidden.dispatchEvent( new Event( 'change' ) );
+			};
+
+			var filterList = function () {
+				var query = input.value.toLowerCase();
+				var visible = 0;
+
+				items.forEach( function ( item ) {
+					var match = -1 !== item.textContent.toLowerCase().indexOf( query );
+					item.classList.toggle( 'fsnw-hidden', ! match );
+
+					if ( match ) {
+						visible += 1;
+					}
+				} );
+
+				list.classList.toggle( 'fsnw-hidden', 0 === visible );
+			};
+
+			input.addEventListener( 'input', function () {
+				clearSelection();
+				input.classList.remove( 'fsnw-combobox__input--invalid' );
+				filterList();
+			} );
+
+			input.addEventListener( 'focus', filterList );
+
+			list.addEventListener( 'click', function ( event ) {
+				var item = event.target.closest( 'li' );
+
+				if ( ! item ) {
+					return;
+				}
+
+				input.value = item.getAttribute( 'data-label' ) || item.textContent.trim();
+				hidden.value = item.getAttribute( 'data-value' );
+
+				if ( item.hasAttribute( 'data-last' ) ) {
+					hidden.dataset.last = item.getAttribute( 'data-last' );
+				}
+
+				input.classList.remove( 'fsnw-combobox__input--invalid' );
+				list.classList.add( 'fsnw-hidden' );
+				hidden.dispatchEvent( new Event( 'change' ) );
+			} );
+
+			document.addEventListener( 'click', function ( event ) {
+				if ( ! combobox.contains( event.target ) ) {
+					list.classList.add( 'fsnw-hidden' );
+				}
+			} );
+
+			// Ohne gültige Auswahl darf das Formular nicht abgeschickt werden.
+			var form = combobox.closest( 'form' );
+
+			if ( form ) {
+				form.addEventListener( 'submit', function ( event ) {
+					if ( '' === hidden.value ) {
+						event.preventDefault();
+						input.classList.add( 'fsnw-combobox__input--invalid' );
+						input.focus();
+					}
+				} );
+			}
+		} );
+
 		// Ausgabe-Formular: Warnung "letzter Bund" nur zeigen, wenn der gewählte
 		// Bund der letzte verfügbare seiner Wohnung ist; die Checkbox muss dann
 		// bewusst gesetzt werden, bevor das Formular abgeschickt werden kann.
 		var issueForm = document.getElementById( 'fsnw-issue-form' );
-		var bundleSelect = document.getElementById( 'fsnw-issue-bundle' );
+		var bundleHidden = document.getElementById( 'fsnw-issue-bundle-id' );
 		var warningBox = document.getElementById( 'fsnw-last-bundle-warning' );
 		var confirmBox = document.getElementById( 'fsnw-last-bundle-confirm' );
 
-		if ( issueForm && bundleSelect && warningBox && confirmBox ) {
+		if ( issueForm && bundleHidden && warningBox && confirmBox ) {
 			var updateWarning = function () {
-				var option = bundleSelect.options[ bundleSelect.selectedIndex ];
-				var isLast = option && '1' === option.getAttribute( 'data-last' );
+				var isLast = '1' === bundleHidden.dataset.last;
 
 				warningBox.classList.toggle( 'fsnw-hidden', ! isLast );
 				warningBox.classList.remove( 'fsnw-shake' );
@@ -105,7 +182,7 @@
 				}
 			};
 
-			bundleSelect.addEventListener( 'change', updateWarning );
+			bundleHidden.addEventListener( 'change', updateWarning );
 			updateWarning();
 
 			issueForm.addEventListener( 'submit', function ( event ) {
