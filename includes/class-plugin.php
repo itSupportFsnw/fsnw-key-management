@@ -45,6 +45,7 @@ class Plugin {
 
 		add_action( 'init', array( $this, 'load_textdomain' ) );
 
+		( new \FsnwKeyManagement\Admin\AdminController() )->init();
 		( new \FsnwKeyManagement\Frontend\FrontendController() )->init();
 		( new Integrations\SignatureKioskIntegration() )->init();
 	}

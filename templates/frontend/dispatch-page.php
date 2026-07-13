@@ -183,6 +183,13 @@ $base_url = remove_query_arg( array( 'fsnw_saved', 'fsnw_error' ), $current_url 
 									<input type="hidden" name="issue_id" value="<?php echo esc_attr( (string) $issue['id'] ); ?>">
 									<button type="submit" class="fsnw-btn fsnw-btn--primary fsnw-btn--small"><?php esc_html_e( 'Rückgabe', 'fsnw-key-management' ); ?></button>
 								</form>
+								<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="fsnw-km-inline-form" onsubmit="return confirm('<?php echo esc_js( __( 'Bund dauerhaft an den Klienten übergeben? Der alte Bund des Klienten wird als Verlust ausgebucht.', 'fsnw-key-management' ) ); ?>');">
+									<?php wp_nonce_field( 'fsnw_km_issue_handover' ); ?>
+									<input type="hidden" name="action" value="fsnw_km_issue_handover">
+									<input type="hidden" name="redirect_url" value="<?php echo esc_attr( $base_url ); ?>">
+									<input type="hidden" name="issue_id" value="<?php echo esc_attr( (string) $issue['id'] ); ?>">
+									<button type="submit" class="fsnw-btn fsnw-btn--secondary fsnw-btn--small"><?php esc_html_e( 'An Klient übergeben', 'fsnw-key-management' ); ?></button>
+								</form>
 								<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="fsnw-km-inline-form" onsubmit="return confirm('<?php echo esc_js( __( 'Bund wirklich als verloren melden?', 'fsnw-key-management' ) ); ?>');">
 									<?php wp_nonce_field( 'fsnw_km_issue_lost' ); ?>
 									<input type="hidden" name="action" value="fsnw_km_issue_lost">

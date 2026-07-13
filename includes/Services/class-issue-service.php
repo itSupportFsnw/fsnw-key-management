@@ -21,9 +21,11 @@ defined( 'ABSPATH' ) || exit;
  */
 class IssueService {
 
-	public const TYPE_EINZUG    = 'einzug';
-	public const TYPE_KONTROLLE = 'kontrolle';
-	public const TYPE_SONSTIGES = 'sonstiges';
+	public const TYPE_EINZUG        = 'einzug';
+	public const TYPE_VERLUST       = 'verlust';
+	public const TYPE_KONTROLLE     = 'kontrolle';
+	public const TYPE_AUFSCHLIESSEN = 'aufschliessen';
+	public const TYPE_SONSTIGES    = 'sonstiges';
 
 	public const STATUS_AWAITING_SIGNATURE = 'awaiting_signature';
 	public const STATUS_ISSUED             = 'issued';
@@ -103,10 +105,21 @@ class IssueService {
 	 */
 	public static function type_labels(): array {
 		return array(
-			self::TYPE_KONTROLLE => __( 'Wohnungskontrolle', 'fsnw-key-management' ),
-			self::TYPE_EINZUG    => __( 'Einzug (Bund kommt nicht zurück)', 'fsnw-key-management' ),
-			self::TYPE_SONSTIGES => __( 'Sonstiges', 'fsnw-key-management' ),
+			self::TYPE_KONTROLLE     => __( 'Wohnungskontrolle (kommt zurück)', 'fsnw-key-management' ),
+			self::TYPE_AUFSCHLIESSEN => __( 'Aufschließen – ausgesperrt (kommt zurück)', 'fsnw-key-management' ),
+			self::TYPE_EINZUG        => __( 'Einzug (Bund bleibt beim Klienten)', 'fsnw-key-management' ),
+			self::TYPE_VERLUST       => __( 'Ausgabe bei Verlust (Ersatz an Klient, alter Bund wird ausgebucht)', 'fsnw-key-management' ),
+			self::TYPE_SONSTIGES     => __( 'Sonstiges (kommt zurück)', 'fsnw-key-management' ),
 		);
+	}
+
+	/**
+	 * True für Typen, bei denen der Bund dauerhaft weggeht (keine Rückgabe).
+	 *
+	 * @param string $type Ausgabe-Typ.
+	 */
+	public static function is_permanent_type( string $type ): bool {
+		return in_array( $type, array( self::TYPE_EINZUG, self::TYPE_VERLUST ), true );
 	}
 
 	/**
@@ -244,8 +257,8 @@ class IssueService {
 	public function mark_returned( int $issue_id ): void {
 		$issue = $this->require_issue( $issue_id, self::STATUS_ISSUED );
 
-		if ( self::TYPE_EINZUG === $issue['type'] ) {
-			throw new \InvalidArgumentException( esc_html__( 'Bei einer Einzug-Ausgabe ist keine Rückgabe vorgesehen.', 'fsnw-key-management' ) );
+		if ( self::is_permanent_type( $issue['type'] ) ) {
+			throw new \InvalidArgumentException( esc_html__( 'Bei dieser Ausgabe-Art ist keine Rückgabe vorgesehen (Bund bleibt beim Klienten).', 'fsnw-key-management' ) );
 		}
 
 		$this->update_issue_status(
@@ -301,10 +314,16 @@ class IssueService {
 			)
 		);
 
-		// Bei Einzug geht der Bund dauerhaft weg - er zählt ab jetzt nicht mehr
-		// zum Bestand und löst ggf. den Hinweis "Neuen Schlüssel anfertigen" aus.
-		if ( self::TYPE_EINZUG === $issue['type'] ) {
+		// Bei Einzug/Verlust geht der Bund dauerhaft weg - er zählt ab jetzt nicht
+		// mehr zum Bestand und löst ggf. den Hinweis "Neuen Schlüssel anfertigen" aus.
+		if ( self::is_permanent_type( $issue['type'] ) ) {
 			$this->update_bundle_status( (int) $issue['bundle_id'], BundleService::STATUS_HANDED_OVER );
+		}
+
+		// Bei "Ausgabe bei Verlust" wird zusätzlich der verlorene alte Bund des
+		// Klienten ausgebucht (die Bunde sind untereinander identisch).
+		if ( self::TYPE_VERLUST === $issue['type'] ) {
+			$this->book_out_lost_bundle( (int) $issue['bundle_id'], $issue_id );
 		}
 
 		$this->log_service->log(
@@ -313,6 +332,77 @@ class IssueService {
 			$issue_id,
 			array( 'kiosk_signature_id' => $kiosk_signature_id )
 		);
+	}
+
+	/**
+	 * Übergibt einen unterwegs befindlichen Bund dauerhaft an den Klienten
+	 * (Verlust-Nachmeldung): Die laufende Ausgabe mit Rückkehr wird zur
+	 * "Ausgabe bei Verlust", der Bund bleibt beim Klienten und der verlorene
+	 * alte Bund des Klienten wird ausgebucht.
+	 *
+	 * @param int $issue_id Ausgabe-ID.
+	 * @throws \InvalidArgumentException Wenn die Ausgabe nicht offen/unterwegs ist.
+	 */
+	public function hand_over_to_client( int $issue_id ): void {
+		$issue  = $this->require_issue( $issue_id, self::STATUS_ISSUED );
+		$bundle = $this->bundle_service->find( (int) $issue['bundle_id'] );
+
+		if ( null === $bundle || BundleService::STATUS_ISSUED !== $bundle['status'] ) {
+			throw new \InvalidArgumentException( esc_html__( 'Dieser Bund ist nicht (mehr) unterwegs.', 'fsnw-key-management' ) );
+		}
+
+		$original_type = (string) $issue['type'];
+
+		$this->repository->update(
+			$issue_id,
+			array(
+				'type'       => self::TYPE_VERLUST,
+				'updated_at' => current_time( 'mysql' ),
+			)
+		);
+
+		$this->update_bundle_status( (int) $issue['bundle_id'], BundleService::STATUS_HANDED_OVER );
+		$this->book_out_lost_bundle( (int) $issue['bundle_id'], $issue_id );
+
+		$this->log_service->log(
+			(int) $issue['bundle_id'],
+			'issue_handed_over_to_client',
+			$issue_id,
+			array( 'original_type' => $original_type )
+		);
+	}
+
+	/**
+	 * Bucht den verlorenen alten Bund des Klienten aus: markiert einen anderen,
+	 * dauerhaft vergebenen (handed_over) Bund derselben Wohnung als verloren.
+	 * Existiert keiner, passiert nichts (der Verlust betrifft dann einen Bund,
+	 * der nie im System erfasst wurde).
+	 *
+	 * @param int $issued_bundle_id Der gerade ausgegebene Bund (bleibt unberührt).
+	 * @param int $issue_id         Auslösende Ausgabe (für die Historie).
+	 */
+	private function book_out_lost_bundle( int $issued_bundle_id, int $issue_id ): void {
+		$issued_bundle = $this->bundle_service->find( $issued_bundle_id );
+
+		if ( null === $issued_bundle ) {
+			return;
+		}
+
+		foreach ( $this->bundle_service->list_by_apartment( (int) $issued_bundle['apartment_id'] ) as $candidate ) {
+			if ( (int) $candidate['id'] === $issued_bundle_id || BundleService::STATUS_HANDED_OVER !== $candidate['status'] ) {
+				continue;
+			}
+
+			$this->update_bundle_status( (int) $candidate['id'], BundleService::STATUS_LOST );
+			$this->log_service->log(
+				(int) $candidate['id'],
+				'bundle_lost',
+				$issue_id,
+				array( 'auto' => true, 'reason' => 'verlust_ausgebucht' )
+			);
+
+			return;
+		}
 	}
 
 	/**

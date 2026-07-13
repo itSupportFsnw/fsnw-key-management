@@ -20,6 +20,7 @@
     },
     "autoload": {
         "classmap": [
+            "admin/",
             "frontend/",
             "includes/"
         ]

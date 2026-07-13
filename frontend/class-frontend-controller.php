@@ -36,6 +36,7 @@ class FrontendController {
 		add_action( 'admin_post_fsnw_km_issue_abort', array( $this, 'handle_issue_abort' ) );
 		add_action( 'admin_post_fsnw_km_issue_return', array( $this, 'handle_issue_return' ) );
 		add_action( 'admin_post_fsnw_km_issue_lost', array( $this, 'handle_issue_lost' ) );
+		add_action( 'admin_post_fsnw_km_issue_handover', array( $this, 'handle_issue_handover' ) );
 	}
 
 	/**
@@ -323,6 +324,15 @@ class FrontendController {
 	public function handle_issue_lost(): void {
 		$this->verify_request( 'fsnw_km_issue_lost' );
 		$this->run_issue_action( 'mark_lost' );
+	}
+
+	/**
+	 * Übergibt einen unterwegs befindlichen Bund dauerhaft an den Klienten
+	 * (Verlust-Nachmeldung, siehe IssueService::hand_over_to_client()).
+	 */
+	public function handle_issue_handover(): void {
+		$this->verify_request( 'fsnw_km_issue_handover' );
+		$this->run_issue_action( 'hand_over_to_client' );
 	}
 
 	/**

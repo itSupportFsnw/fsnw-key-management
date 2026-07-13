@@ -6,6 +6,23 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-07-13
+
+Added
+
+- Import-Werkzeug im WP-Admin (Werkzeuge → Schlüssel-Import): eine Zeile pro
+  Wohnung (`Straße;Hausnummer;PLZ;Ort;Wohneinheit;AnzahlBunde;SchlüsselProBund`,
+  die letzten drei optional mit Standardwerten leer/2/3) legt Wohnung und
+  durchnummerierte, identische Bunde in einem Rutsch an; Ergebnis-/Fehlerbericht
+  pro Zeile.
+- Neue Ausgabe-Typen: "Aufschließen – ausgesperrt" (kommt zurück) und
+  "Ausgabe bei Verlust" (Ersatz an Klient, Bund bleibt dort; zusätzlich wird
+  automatisch ein dauerhaft vergebener Bund derselben Wohnung als verloren
+  ausgebucht — die Bunde sind untereinander identisch).
+- "An Klient übergeben"-Aktion in der Draußen-Liste (Verlust-Nachmeldung):
+  eine laufende Ausgabe mit Rückkehr wird zur "Ausgabe bei Verlust", der Bund
+  bleibt beim Klienten und der alte Bund des Klienten wird ausgebucht.
+
 ## [1.0.2] - 2026-07-13
 
 Changed
