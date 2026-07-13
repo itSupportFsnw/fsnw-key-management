@@ -1,0 +1,428 @@
+/**
+ * Basis-Komponentenbibliothek: Buttons, Cards, Badges, Tabs, Formulare, Tabellen.
+ * Baut auf tokens.css auf und wird von allen Plugin-Oberflächen geladen.
+ */
+
+.fsnw-car-rent-app,
+.fsnw-car-rent-app input,
+.fsnw-car-rent-app select,
+.fsnw-car-rent-app textarea,
+.fsnw-car-rent-app button {
+	font-family: var( --fsnw-font );
+	color: var( --fsnw-text );
+}
+
+/* Corporate-Verlauf als vollflächiger, weicher Hintergrund hinter allen Oberflächen.
+   Die Signatur-Kiosk-Seite setzt ihren Hintergrund selbst (frontend-signature.css). */
+
+.fsnw-car-rent-app,
+.fsnw-car-rent-admin,
+.fsnw-car-rent--dispatch,
+.fsnw-car-rent--booking {
+	background: var( --fsnw-gradient-hero );
+	border-radius: var( --fsnw-radius-lg );
+	padding: var( --fsnw-space-5 );
+}
+
+.fsnw-car-rent-app h1,
+.fsnw-car-rent-app h2,
+.fsnw-car-rent-app h3 {
+	font-family: var( --fsnw-font );
+	font-weight: 600;
+	line-height: 1.25;
+	margin: 0 0 var( --fsnw-space-3 );
+	color: var( --fsnw-text );
+}
+
+.fsnw-car-rent-app h1 {
+	font-size: var( --fsnw-font-size-h1 );
+}
+
+.fsnw-car-rent-app h2 {
+	font-size: var( --fsnw-font-size-h2 );
+}
+
+.fsnw-car-rent-app h3 {
+	font-size: var( --fsnw-font-size-h3 );
+}
+
+.fsnw-car-rent-app p {
+	font-size: var( --fsnw-font-size-body );
+	line-height: 1.5;
+	color: var( --fsnw-text-muted );
+}
+
+/* Icons */
+
+.fsnw-icon {
+	display: inline-block;
+	vertical-align: middle;
+	width: 1.25em;
+	height: 1.25em;
+	stroke: currentColor;
+	fill: none;
+	flex-shrink: 0;
+}
+
+/* Buttons */
+
+.fsnw-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var( --fsnw-space-2 );
+	font-family: var( --fsnw-font );
+	font-size: var( --fsnw-font-size-body );
+	font-weight: 600;
+	line-height: 1;
+	padding: var( --fsnw-space-3 ) var( --fsnw-space-5 );
+	border-radius: var( --fsnw-radius-sm );
+	border: 1px solid transparent;
+	cursor: pointer;
+	text-decoration: none;
+	min-height: 44px;
+	transition: background-color var( --fsnw-transition-fast ), border-color var( --fsnw-transition-fast ),
+		box-shadow var( --fsnw-transition-fast ), transform var( --fsnw-transition-fast );
+}
+
+.fsnw-btn:focus-visible {
+	outline: 2px solid var( --fsnw-primary );
+	outline-offset: 2px;
+}
+
+.fsnw-btn--primary {
+	background: linear-gradient( 135deg, var( --fsnw-primary ) 0%, var( --fsnw-primary-dark ) 100% );
+	color: var( --fsnw-text-on-primary );
+	box-shadow: var( --fsnw-shadow-sm );
+}
+
+.fsnw-btn--primary:hover {
+	box-shadow: var( --fsnw-shadow-md );
+	transform: translateY( -1px );
+}
+
+.fsnw-btn--primary:active {
+	transform: translateY( 0 );
+	box-shadow: var( --fsnw-shadow-sm );
+}
+
+.fsnw-btn--secondary {
+	background: var( --fsnw-surface );
+	color: var( --fsnw-primary-dark );
+	border-color: var( --fsnw-border );
+	box-shadow: var( --fsnw-shadow-sm );
+}
+
+.fsnw-btn--secondary:hover {
+	border-color: var( --fsnw-primary-light );
+	background: var( --fsnw-primary-light-bg );
+	transform: translateY( -1px );
+	box-shadow: var( --fsnw-shadow-md );
+}
+
+.fsnw-btn--ghost {
+	background: transparent;
+	color: var( --fsnw-text-muted );
+}
+
+.fsnw-btn--ghost:hover {
+	background: var( --fsnw-primary-light-bg );
+	color: var( --fsnw-primary-dark );
+}
+
+.fsnw-btn--danger {
+	background: var( --fsnw-status-overdue-bg );
+	color: var( --fsnw-status-overdue );
+}
+
+.fsnw-btn--danger:hover {
+	background: var( --fsnw-status-overdue );
+	color: #fff;
+}
+
+.fsnw-btn--small {
+	min-height: 32px;
+	padding: var( --fsnw-space-1 ) var( --fsnw-space-3 );
+	font-size: var( --fsnw-font-size-small );
+}
+
+.fsnw-btn--large {
+	min-height: 64px;
+	padding: var( --fsnw-space-4 ) var( --fsnw-space-6 );
+	font-size: var( --fsnw-font-size-h3 );
+}
+
+.fsnw-btn:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+	box-shadow: none;
+	transform: none;
+}
+
+/* Cards — halbtransparent auf dem Verlauf, mit weichem Blur und Hover-Lift */
+
+.fsnw-card {
+	background: var( --fsnw-surface-translucent );
+	-webkit-backdrop-filter: blur( 12px );
+	backdrop-filter: blur( 12px );
+	border-radius: var( --fsnw-radius-md );
+	border: 1px solid rgba( 255, 255, 255, 0.6 );
+	box-shadow: var( --fsnw-shadow-sm );
+	padding: var( --fsnw-space-5 );
+	transition: box-shadow var( --fsnw-transition-base ), transform var( --fsnw-transition-base ),
+		border-color var( --fsnw-transition-base );
+}
+
+.fsnw-card--interactive:hover {
+	box-shadow: var( --fsnw-shadow-lg );
+	transform: translateY( -3px );
+	border-color: var( --fsnw-primary-light );
+}
+
+.fsnw-card-grid {
+	display: grid;
+	grid-template-columns: repeat( auto-fill, minmax( 260px, 1fr ) );
+	gap: var( --fsnw-space-5 );
+}
+
+/* Badges & Status-Dots */
+
+.fsnw-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: var( --fsnw-space-2 );
+	font-size: var( --fsnw-font-size-small );
+	font-weight: 600;
+	padding: var( --fsnw-space-1 ) var( --fsnw-space-3 );
+	border-radius: var( --fsnw-radius-pill );
+	white-space: nowrap;
+}
+
+.fsnw-dot {
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.fsnw-badge--available,
+.fsnw-dot--available {
+	background: var( --fsnw-status-available-bg );
+	color: var( --fsnw-status-available );
+}
+
+.fsnw-dot--available {
+	background: var( --fsnw-status-available );
+}
+
+.fsnw-badge--booked,
+.fsnw-dot--booked {
+	background: var( --fsnw-status-booked-bg );
+	color: var( --fsnw-status-booked );
+}
+
+.fsnw-dot--booked {
+	background: var( --fsnw-status-booked );
+}
+
+.fsnw-badge--underway,
+.fsnw-dot--underway {
+	background: var( --fsnw-status-underway-bg );
+	color: var( --fsnw-status-underway );
+}
+
+.fsnw-dot--underway {
+	background: var( --fsnw-status-underway );
+}
+
+.fsnw-badge--overdue,
+.fsnw-dot--overdue {
+	background: var( --fsnw-status-overdue-bg );
+	color: var( --fsnw-status-overdue );
+}
+
+.fsnw-dot--overdue {
+	background: var( --fsnw-status-overdue );
+}
+
+.fsnw-badge--inactive,
+.fsnw-dot--inactive {
+	background: var( --fsnw-status-inactive-bg );
+	color: var( --fsnw-status-inactive );
+}
+
+.fsnw-dot--inactive {
+	background: var( --fsnw-status-inactive );
+}
+
+/* Tabs mit Bubble-Countern */
+
+.fsnw-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var( --fsnw-space-2 );
+	border-bottom: 1px solid var( --fsnw-border );
+	margin-bottom: var( --fsnw-space-5 );
+}
+
+.fsnw-tab {
+	display: inline-flex;
+	align-items: center;
+	gap: var( --fsnw-space-2 );
+	background: transparent;
+	border: none;
+	border-bottom: 2px solid transparent;
+	padding: var( --fsnw-space-3 ) var( --fsnw-space-4 );
+	font-family: var( --fsnw-font );
+	font-size: var( --fsnw-font-size-body );
+	font-weight: 600;
+	color: var( --fsnw-text-muted );
+	cursor: pointer;
+	min-height: 44px;
+	transition: color var( --fsnw-transition-fast ), border-color var( --fsnw-transition-fast ),
+		background-color var( --fsnw-transition-fast );
+}
+
+.fsnw-tab:hover {
+	color: var( --fsnw-text );
+	background: var( --fsnw-primary-light-bg );
+	border-radius: var( --fsnw-radius-sm ) var( --fsnw-radius-sm ) 0 0;
+}
+
+.fsnw-tab:focus-visible {
+	outline: 2px solid var( --fsnw-primary );
+	outline-offset: 2px;
+}
+
+.fsnw-tab.is-active {
+	color: var( --fsnw-primary-dark );
+	border-bottom-color: var( --fsnw-primary );
+}
+
+.fsnw-tab-count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 20px;
+	height: 20px;
+	padding: 0 var( --fsnw-space-2 );
+	border-radius: var( --fsnw-radius-pill );
+	background: var( --fsnw-status-inactive-bg );
+	color: var( --fsnw-text-muted );
+	font-size: var( --fsnw-font-size-small );
+	font-weight: 600;
+}
+
+.fsnw-tab.is-active .fsnw-tab-count {
+	background: var( --fsnw-primary );
+	color: var( --fsnw-text-on-primary );
+}
+
+/* Formulare */
+
+.fsnw-car-rent-app label {
+	display: block;
+	font-size: var( --fsnw-font-size-small );
+	font-weight: 600;
+	color: var( --fsnw-text-muted );
+	margin-bottom: var( --fsnw-space-1 );
+}
+
+.fsnw-car-rent-app input[type="text"],
+.fsnw-car-rent-app input[type="search"],
+.fsnw-car-rent-app input[type="date"],
+.fsnw-car-rent-app input[type="datetime-local"],
+.fsnw-car-rent-app input[type="email"],
+.fsnw-car-rent-app input[type="number"],
+.fsnw-car-rent-app select,
+.fsnw-car-rent-app textarea {
+	width: 100%;
+	font-size: var( --fsnw-font-size-body );
+	padding: var( --fsnw-space-3 ) var( --fsnw-space-4 );
+	border: 1px solid var( --fsnw-border );
+	border-radius: var( --fsnw-radius-sm );
+	background: var( --fsnw-surface );
+	min-height: 44px;
+	transition: border-color var( --fsnw-transition-fast ), box-shadow var( --fsnw-transition-fast );
+}
+
+.fsnw-car-rent-app input:focus-visible,
+.fsnw-car-rent-app select:focus-visible,
+.fsnw-car-rent-app textarea:focus-visible {
+	outline: none;
+	border-color: var( --fsnw-primary );
+	box-shadow: 0 0 0 3px var( --fsnw-primary-light-bg );
+}
+
+/* Tabelle (bewusst tabellarisch für dichte Daten, z. B. Audit Log) */
+
+.fsnw-table {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+	background: var( --fsnw-surface-translucent );
+	-webkit-backdrop-filter: blur( 12px );
+	backdrop-filter: blur( 12px );
+	border: 1px solid rgba( 255, 255, 255, 0.6 );
+	border-radius: var( --fsnw-radius-md );
+	overflow: hidden;
+	box-shadow: var( --fsnw-shadow-sm );
+}
+
+.fsnw-table th,
+.fsnw-table td {
+	text-align: left;
+	padding: var( --fsnw-space-3 ) var( --fsnw-space-4 );
+	font-size: var( --fsnw-font-size-body );
+	border-bottom: 1px solid var( --fsnw-border );
+}
+
+.fsnw-table th {
+	background: var( --fsnw-primary-light-bg );
+	font-size: var( --fsnw-font-size-small );
+	font-weight: 700;
+	color: var( --fsnw-text-muted );
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+}
+
+.fsnw-table tbody tr {
+	transition: background-color var( --fsnw-transition-fast );
+}
+
+.fsnw-table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.fsnw-table tbody tr:hover {
+	background: var( --fsnw-primary-light-bg );
+}
+
+/* Fade-Animationen */
+
+@keyframes fsnw-fade-in {
+	from {
+		opacity: 0;
+		transform: translateY( 4px );
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY( 0 );
+	}
+}
+
+.fsnw-fade-in {
+	animation: fsnw-fade-in var( --fsnw-transition-slow );
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.fsnw-fade-in,
+	.fsnw-card--interactive,
+	.fsnw-btn,
+	.fsnw-tab {
+		animation: none !important;
+		transition: none !important;
+	}
+}

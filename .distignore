@@ -1,0 +1,14 @@
+.git
+.github
+.gitignore
+.editorconfig
+.distignore
+phpcs.xml.dist
+composer.json
+composer.lock
+docs
+build
+dist
+node_modules
+tests
+*.zip

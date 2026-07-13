@@ -1,0 +1,83 @@
+/**
+ * Design-Tokens: Corporate-Farbpalette, Abstände, Radien, Schatten, Typografie.
+ * Wird vor allen anderen Plugin-Stylesheets geladen (siehe enqueue_assets()).
+ *
+ * Corporate-Farbwelt: weicher Pastellverlauf von Rosa über Lavendel/Violett zu
+ * kühlem Grau und hellem Limettgrün — hochwertig, modern, freundlich.
+ */
+
+:root {
+	/* Markenfarben — Soft-Violett als Akzent, abgeleitet aus der Corporate-Palette */
+	--fsnw-primary: #7d79dd;
+	--fsnw-primary-dark: #5a56c4;
+	--fsnw-primary-light: #a6a3eb;
+	--fsnw-primary-light-bg: rgba( 166, 163, 235, 0.14 );
+	--fsnw-secondary: #bda6d8;
+	--fsnw-accent-coral: #e8a0a8;
+	--fsnw-accent-lime: #d7e89b;
+
+	/* Corporate-Verlauf: Pastellrosa → Lavendel → Soft-Violett → Kühles Grau → Limettgrün.
+	   Aufgehellte Variante der Markenfarben, als vollflächiger Hintergrund hinter UI-Elementen
+	   (nie direkt hinter Text ohne Surface dazwischen). */
+	--fsnw-gradient-hero: linear-gradient(135deg, #f3d0d3 0%, #ded2eb 28%, #d2d1f5 52%, #e3e6e9 76%, #ebf3cd 100%);
+
+	/* Hintergrund- und Oberflächenfarben */
+	--fsnw-bg: #f7f6fb;
+	--fsnw-surface: #ffffff;
+	--fsnw-surface-translucent: rgba(255, 255, 255, 0.82);
+	--fsnw-border: #e3e0ef;
+
+	/* Textfarben */
+	--fsnw-text: #2b2740;
+	--fsnw-text-muted: #6b6685;
+	--fsnw-text-on-primary: #ffffff;
+
+	/* Statusfarben (bewusst von der Markenpalette getrennt).
+	   Auf mind. 4.5:1 Kontrast gegen Weiß/helle -bg-Varianten geprüft (WCAG AA), da sie sowohl
+	   als Text auf hellem Grund (Badges, KPI-Werte) als auch als Hintergrund mit weißem Text
+	   (Kalender-Events) verwendet werden. */
+	--fsnw-status-available: #16793f;
+	--fsnw-status-available-bg: #e6f7ec;
+	--fsnw-status-booked: #2a63d9;
+	--fsnw-status-booked-bg: #e8f0fe;
+	--fsnw-status-underway: #a35c0e;
+	--fsnw-status-underway-bg: #fdf1e0;
+	--fsnw-status-overdue: #c33540;
+	--fsnw-status-overdue-bg: #fbe7e8;
+	--fsnw-status-inactive: #6e6e7d;
+	--fsnw-status-inactive-bg: #f0f0f3;
+
+	/* Radien — weich und modern */
+	--fsnw-radius-sm: 10px;
+	--fsnw-radius-md: 14px;
+	--fsnw-radius-lg: 18px;
+	--fsnw-radius-pill: 999px;
+
+	/* Schatten — weich und diffus, für Tiefe und Interaktivität */
+	--fsnw-shadow-sm: 0 1px 3px rgba(43, 39, 64, 0.06), 0 1px 2px rgba(43, 39, 64, 0.08);
+	--fsnw-shadow-md: 0 4px 16px rgba(43, 39, 64, 0.08), 0 2px 4px rgba(43, 39, 64, 0.06);
+	--fsnw-shadow-lg: 0 12px 32px rgba(43, 39, 64, 0.12), 0 4px 8px rgba(43, 39, 64, 0.06);
+
+	/* Abstände */
+	--fsnw-space-1: 4px;
+	--fsnw-space-2: 8px;
+	--fsnw-space-3: 12px;
+	--fsnw-space-4: 16px;
+	--fsnw-space-5: 24px;
+	--fsnw-space-6: 32px;
+	--fsnw-space-7: 48px;
+	--fsnw-space-8: 64px;
+
+	/* Typografie */
+	--fsnw-font: "Segoe UI", "Aptos", Inter, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+	--fsnw-font-size-h1: 2rem;
+	--fsnw-font-size-h2: 1.5rem;
+	--fsnw-font-size-h3: 1.125rem;
+	--fsnw-font-size-body: 0.9375rem;
+	--fsnw-font-size-small: 0.8125rem;
+
+	/* Übergänge */
+	--fsnw-transition-fast: 150ms ease;
+	--fsnw-transition-base: 250ms ease;
+	--fsnw-transition-slow: 300ms ease;
+}
