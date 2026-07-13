@@ -93,13 +93,18 @@ $base_url = remove_query_arg( array( 'fsnw_saved', 'fsnw_error' ), $current_url 
 					</label>
 				</div>
 
-				<label for="fsnw-issue-employee"><?php esc_html_e( 'Mitarbeiter (Empfänger)', 'fsnw-key-management' ); ?></label>
-				<select id="fsnw-issue-employee" name="issued_to_user_id" required>
-					<option value=""><?php esc_html_e( 'Bitte wählen …', 'fsnw-key-management' ); ?></option>
-					<?php foreach ( $employees as $employee ) : ?>
-						<option value="<?php echo esc_attr( (string) $employee->ID ); ?>"><?php echo esc_html( $employee->display_name ); ?></option>
-					<?php endforeach; ?>
-				</select>
+				<label for="fsnw-issue-employee-search"><?php esc_html_e( 'Mitarbeiter (Empfänger) suchen', 'fsnw-key-management' ); ?></label>
+				<div class="fsnw-combobox">
+					<input type="text" id="fsnw-issue-employee-search" class="fsnw-combobox__input" autocomplete="off" placeholder="<?php esc_attr_e( 'Namen tippen …', 'fsnw-key-management' ); ?>">
+					<input type="hidden" name="issued_to_user_id">
+					<ul class="fsnw-combobox__list fsnw-hidden">
+						<?php foreach ( $employees as $employee ) : ?>
+							<li data-value="<?php echo esc_attr( (string) $employee->ID ); ?>" data-label="<?php echo esc_attr( $employee->display_name ); ?>">
+								<?php echo esc_html( $employee->display_name ); ?>
+							</li>
+						<?php endforeach; ?>
+					</ul>
+				</div>
 
 				<label for="fsnw-issue-type"><?php esc_html_e( 'Ausgabe-Typ', 'fsnw-key-management' ); ?></label>
 				<select id="fsnw-issue-type" name="issue_type" required>

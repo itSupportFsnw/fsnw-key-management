@@ -6,6 +6,26 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-07-13
+
+Changed
+
+- Inventar (Verwaltungs-Seite): Die Bund-Tabellen der Wohnungen sind jetzt
+  standardmäßig eingeklappt ("Bunde anzeigen"-Button je Wohnung) und über
+  ein Suchfeld lassen sich die Wohnungs-Karten live filtern — die Liste
+  bleibt damit auch bei ~200 Wohnungen übersichtlich.
+- Ausgabe-Seite: Auch die Mitarbeiter-Auswahl ist jetzt ein Suchfeld
+  (Namen tippen) statt eines Dropdowns.
+
+Added
+
+- Admin-Werkzeug "Schlüssel-Daten aufräumen" (Werkzeuge, nur Administratoren):
+  eine Wohnung inkl. aller Bunde/Ausgaben/Historie endgültig löschen
+  (Testdaten) sowie abgeschlossene Ausgaben und Historie-Einträge älter als
+  X Tage (min. 30) löschen. Beide Aktionen mit Bestätigungs-Checkbox und
+  Rückfrage; Wohnungen, Bunde und Verlust-/Einzug-Ausgaben bleiben beim
+  Altdaten-Löschen als Nachweis erhalten.
+
 ## [1.3.0] - 2026-07-13
 
 Added

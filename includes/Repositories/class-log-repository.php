@@ -63,6 +63,39 @@ class LogRepository {
 	}
 
 	/**
+	 * Löscht alle Historie-Einträge der angegebenen Bunde endgültig (nur für das Aufräum-Werkzeug).
+	 *
+	 * @param int[] $bundle_ids Bund-IDs.
+	 * @return int Anzahl gelöschter Einträge.
+	 */
+	public function delete_by_bundles( array $bundle_ids ): int {
+		if ( empty( $bundle_ids ) ) {
+			return 0;
+		}
+
+		$placeholders = implode( ', ', array_fill( 0, count( $bundle_ids ), '%d' ) );
+
+		return (int) $this->wpdb->query(
+			$this->wpdb->prepare(
+				"DELETE FROM %i WHERE bundle_id IN ({$placeholders})", // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+				array_merge( array( $this->table ), array_map( 'intval', $bundle_ids ) )
+			)
+		);
+	}
+
+	/**
+	 * Löscht Historie-Einträge, die älter als der Stichtag sind (nur für das Aufräum-Werkzeug).
+	 *
+	 * @param string $cutoff Stichtag im Format "Y-m-d H:i:s".
+	 * @return int Anzahl gelöschter Einträge.
+	 */
+	public function delete_older_than( string $cutoff ): int {
+		return (int) $this->wpdb->query(
+			$this->wpdb->prepare( 'DELETE FROM %i WHERE created_at < %s', $this->table, $cutoff )
+		);
+	}
+
+	/**
 	 * Listet die gesammelte Historie mehrerer Bunde, neueste zuerst.
 	 *
 	 * @param int[] $bundle_ids Bund-IDs.

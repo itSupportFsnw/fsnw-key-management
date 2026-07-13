@@ -66,6 +66,40 @@
 			}
 		} );
 
+		// Inventar (Verwaltungs-Seite): Wohnungs-Karten sind standardmäßig
+		// eingeklappt; der Toggle-Button zeigt/verbirgt die Bund-Tabelle.
+		document.addEventListener( 'click', function ( event ) {
+			var toggle = event.target.closest( '.fsnw-km-toggle' );
+
+			if ( ! toggle ) {
+				return;
+			}
+
+			var card = toggle.closest( '.fsnw-km-apartment' );
+			var body = card ? card.querySelector( '.fsnw-km-apartment__body' ) : null;
+
+			if ( ! body ) {
+				return;
+			}
+
+			var isHidden = body.classList.toggle( 'fsnw-hidden' );
+			toggle.setAttribute( 'aria-expanded', isHidden ? 'false' : 'true' );
+			toggle.textContent = isHidden ? toggle.getAttribute( 'data-label-show' ) || 'Bunde anzeigen' : toggle.getAttribute( 'data-label-hide' ) || 'Bunde verbergen';
+		} );
+
+		// Inventar-Suche: filtert die Wohnungs-Karten live.
+		var inventorySearch = document.getElementById( 'fsnw-inventory-search' );
+
+		if ( inventorySearch ) {
+			inventorySearch.addEventListener( 'input', function () {
+				var query = inventorySearch.value.toLowerCase();
+
+				document.querySelectorAll( '.fsnw-km-apartment' ).forEach( function ( card ) {
+					card.classList.toggle( 'fsnw-hidden', -1 === card.textContent.toLowerCase().indexOf( query ) );
+				} );
+			} );
+		}
+
 		// Schlüsselliste (Mitarbeiter-Ansicht): Live-Filter über die Tabellenzeilen.
 		var listSearch = document.getElementById( 'fsnw-key-list-search' );
 		var listTable = document.getElementById( 'fsnw-key-list-table' );

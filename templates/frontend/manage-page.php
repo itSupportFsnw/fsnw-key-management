@@ -197,6 +197,11 @@ $render_key_fields = static function ( array $keys ): void {
 
 	<h2><?php esc_html_e( 'Inventar', 'fsnw-key-management' ); ?></h2>
 
+	<div class="fsnw-card fsnw-km-form-card fsnw-fade-in">
+		<label for="fsnw-inventory-search"><?php esc_html_e( 'Wohnung suchen', 'fsnw-key-management' ); ?></label>
+		<input type="search" id="fsnw-inventory-search" autocomplete="off" placeholder="<?php esc_attr_e( 'Straße, Ort oder Bund tippen …', 'fsnw-key-management' ); ?>">
+	</div>
+
 	<?php if ( empty( $apartments ) ) : ?>
 		<div class="fsnw-card"><p><?php esc_html_e( 'Noch keine Wohnungen angelegt.', 'fsnw-key-management' ); ?></p></div>
 	<?php endif; ?>
@@ -247,9 +252,19 @@ $render_key_fields = static function ( array $keys ): void {
 					<a class="fsnw-btn fsnw-btn--secondary fsnw-btn--small" href="<?php echo esc_url( add_query_arg( 'fsnw_edit_apartment', $apartment_id, $base_url ) ); ?>">
 						<?php esc_html_e( 'Bearbeiten', 'fsnw-key-management' ); ?>
 					</a>
+					<button
+						type="button"
+						class="fsnw-btn fsnw-btn--secondary fsnw-btn--small fsnw-km-toggle"
+						aria-expanded="false"
+						data-label-show="<?php esc_attr_e( 'Bunde anzeigen', 'fsnw-key-management' ); ?>"
+						data-label-hide="<?php esc_attr_e( 'Bunde verbergen', 'fsnw-key-management' ); ?>"
+					>
+						<?php esc_html_e( 'Bunde anzeigen', 'fsnw-key-management' ); ?>
+					</button>
 				</div>
 			</div>
 
+			<div class="fsnw-km-apartment__body fsnw-hidden">
 			<?php if ( empty( $bundles ) ) : ?>
 				<p class="fsnw-km-muted"><?php esc_html_e( 'Noch keine Schlüsselbunde angelegt.', 'fsnw-key-management' ); ?></p>
 			<?php else : ?>
@@ -320,6 +335,7 @@ $render_key_fields = static function ( array $keys ): void {
 					</tbody>
 				</table>
 			<?php endif; ?>
+			</div>
 		</div>
 	<?php endforeach; ?>
 

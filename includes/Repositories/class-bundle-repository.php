@@ -99,6 +99,31 @@ class BundleRepository {
 	}
 
 	/**
+	 * Liefert nur die IDs aller Bunde einer Wohnung.
+	 *
+	 * @param int $apartment_id Wohnungs-ID.
+	 * @return int[]
+	 */
+	public function ids_by_apartment( int $apartment_id ): array {
+		return array_map(
+			'intval',
+			(array) $this->wpdb->get_col(
+				$this->wpdb->prepare( 'SELECT id FROM %i WHERE apartment_id = %d', $this->table, $apartment_id )
+			)
+		);
+	}
+
+	/**
+	 * Löscht alle Bunde einer Wohnung endgültig (nur für das Aufräum-Werkzeug).
+	 *
+	 * @param int $apartment_id Wohnungs-ID.
+	 * @return int Anzahl gelöschter Bunde.
+	 */
+	public function delete_by_apartment( int $apartment_id ): int {
+		return (int) $this->wpdb->delete( $this->table, array( 'apartment_id' => $apartment_id ) );
+	}
+
+	/**
 	 * Zählt Bunde einer Wohnung je Status.
 	 *
 	 * @param int      $apartment_id Wohnungs-ID.

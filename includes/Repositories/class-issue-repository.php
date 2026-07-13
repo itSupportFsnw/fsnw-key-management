@@ -100,6 +100,44 @@ class IssueRepository {
 	}
 
 	/**
+	 * Löscht alle Ausgaben der angegebenen Bunde endgültig (nur für das Aufräum-Werkzeug).
+	 *
+	 * @param int[] $bundle_ids Bund-IDs.
+	 * @return int Anzahl gelöschter Ausgaben.
+	 */
+	public function delete_by_bundles( array $bundle_ids ): int {
+		if ( empty( $bundle_ids ) ) {
+			return 0;
+		}
+
+		$placeholders = implode( ', ', array_fill( 0, count( $bundle_ids ), '%d' ) );
+
+		return (int) $this->wpdb->query(
+			$this->wpdb->prepare(
+				"DELETE FROM %i WHERE bundle_id IN ({$placeholders})", // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+				array_merge( array( $this->table ), array_map( 'intval', $bundle_ids ) )
+			)
+		);
+	}
+
+	/**
+	 * Löscht abgeschlossene Ausgaben (returned/aborted), die älter als der
+	 * Stichtag sind (nur für das Aufräum-Werkzeug).
+	 *
+	 * @param string $cutoff Stichtag im Format "Y-m-d H:i:s".
+	 * @return int Anzahl gelöschter Ausgaben.
+	 */
+	public function delete_finished_older_than( string $cutoff ): int {
+		return (int) $this->wpdb->query(
+			$this->wpdb->prepare(
+				"DELETE FROM %i WHERE status IN ('returned', 'aborted') AND updated_at < %s",
+				$this->table,
+				$cutoff
+			)
+		);
+	}
+
+	/**
 	 * Findet die aktuell offene Ausgabe eines Bundes (awaiting_signature oder issued), oder null.
 	 *
 	 * @param int $bundle_id Bund-ID.

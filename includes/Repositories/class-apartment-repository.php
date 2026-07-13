@@ -74,6 +74,15 @@ class ApartmentRepository {
 	}
 
 	/**
+	 * Löscht eine Wohnung endgültig (nur für das Aufräum-Werkzeug).
+	 *
+	 * @param int $id Wohnungs-ID.
+	 */
+	public function delete( int $id ): bool {
+		return false !== $this->wpdb->delete( $this->table, array( 'id' => $id ) );
+	}
+
+	/**
 	 * Listet Wohnungen, optional nach Status gefiltert, alphabetisch nach Label.
 	 *
 	 * @param string|null $status Optionaler Statusfilter (active|inactive).
