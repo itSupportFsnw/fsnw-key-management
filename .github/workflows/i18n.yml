@@ -1,0 +1,33 @@
+name: i18n POT
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '**.php'
+      - '.github/workflows/i18n.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  make-pot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Make languages/ writable for container user
+        run: chmod -R 777 languages
+
+      - name: Generate languages/fsnw-key-management.pot
+        uses: docker://wordpress:cli
+        with:
+          entrypoint: wp
+          args: i18n make-pot . languages/fsnw-key-management.pot --domain=fsnw-key-management --exclude=vendor,node_modules --allow-root
+
+      - name: Commit updated POT file
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'Update languages/fsnw-key-management.pot [skip ci]'
+          file_pattern: languages/fsnw-key-management.pot

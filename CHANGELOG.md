@@ -6,6 +6,16 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-07-13
+
+Added
+
+- CI/CD: GitHub-Actions-Workflows für FTP-Deploy (relativer Pfad
+  `./fsnw-key-management/`, FTP-Benutzer ist auf den plugins-Ordner eingeschränkt),
+  PHP-Lint (8.0–8.3), Build-ZIP, Tag-Release und automatische POT-Generierung
+  (`languages/fsnw-key-management.pot` [skip ci]).
+- README mit Konzept, Shortcodes und Ausgabe-Ablauf.
+
 ## [0.3.0] - 2026-07-13
 
 Added

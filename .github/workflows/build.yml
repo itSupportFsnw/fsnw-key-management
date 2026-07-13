@@ -1,0 +1,34 @@
+name: Build Plugin ZIP
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer
+
+      - name: Install Composer dependencies (production)
+        run: composer install --no-dev --optimize-autoloader --prefer-dist --no-progress
+
+      - name: Build plugin ZIP
+        run: |
+          mkdir -p build/fsnw-key-management
+          rsync -a --exclude-from='.distignore' ./ build/fsnw-key-management/
+          (cd build && zip -r fsnw-key-management.zip fsnw-key-management)
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fsnw-key-management
+          path: build/fsnw-key-management.zip
