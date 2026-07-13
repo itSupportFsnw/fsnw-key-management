@@ -2,8 +2,9 @@
 /**
  * Frontend-Template für [wp_fsnw_key_manage] - Verwaltung der Schlüsselverwaltung.
  *
- * Wohnungen und Schlüsselbunde anlegen/bearbeiten, Inventar-Übersicht mit
- * Bestandswarnungen, Verlust-/Ausmusterungs-Verwaltung und Bund-Historie.
+ * Wohnungen und Schlüsselbunde anlegen (Formular-Karten oben), Inventar-Übersicht
+ * mit Bestandswarnungen, Verlust-/Ausmusterungs-Verwaltung. Bearbeiten und
+ * Historie öffnen als Popup (Modal) über der Seite.
  * Zugriff wird im FrontendController über Login + fsnw_manage_keys geprüft.
  *
  * @package FsnwKeyManagement
@@ -46,6 +47,66 @@ foreach ( $apartments as $apartment ) {
 }
 
 $base_url = remove_query_arg( array( 'fsnw_edit_apartment', 'fsnw_edit_bundle', 'fsnw_history', 'fsnw_saved', 'fsnw_error' ), $current_url );
+
+/**
+ * Rendert die Adressfelder des Wohnungs-Formulars (Anlegen und Bearbeiten).
+ *
+ * @param array<string, mixed>|null $apartment Vorbelegung beim Bearbeiten, sonst null.
+ */
+$render_apartment_fields = static function ( ?array $apartment ): void {
+	?>
+	<div class="fsnw-km-field-row">
+		<div class="fsnw-km-field-row__wide">
+			<label for="fsnw-apartment-street"><?php esc_html_e( 'Straße', 'fsnw-key-management' ); ?></label>
+			<input type="text" id="fsnw-apartment-street" name="street" required value="<?php echo esc_attr( $apartment['street'] ?? '' ); ?>">
+		</div>
+		<div>
+			<label for="fsnw-apartment-house-number"><?php esc_html_e( 'Hausnr.', 'fsnw-key-management' ); ?></label>
+			<input type="text" id="fsnw-apartment-house-number" name="house_number" required value="<?php echo esc_attr( $apartment['house_number'] ?? '' ); ?>">
+		</div>
+	</div>
+
+	<div class="fsnw-km-field-row">
+		<div>
+			<label for="fsnw-apartment-zip"><?php esc_html_e( 'PLZ', 'fsnw-key-management' ); ?></label>
+			<input type="text" id="fsnw-apartment-zip" name="zip" required value="<?php echo esc_attr( $apartment['zip'] ?? '' ); ?>">
+		</div>
+		<div class="fsnw-km-field-row__wide">
+			<label for="fsnw-apartment-city"><?php esc_html_e( 'Ort', 'fsnw-key-management' ); ?></label>
+			<input type="text" id="fsnw-apartment-city" name="city" required value="<?php echo esc_attr( $apartment['city'] ?? '' ); ?>">
+		</div>
+	</div>
+
+	<label for="fsnw-apartment-unit"><?php esc_html_e( 'Wohneinheit (optional)', 'fsnw-key-management' ); ?></label>
+	<input type="text" id="fsnw-apartment-unit" name="unit" value="<?php echo esc_attr( $apartment['unit'] ?? '' ); ?>" placeholder="<?php esc_attr_e( 'z. B. WE 3 / 2. OG links', 'fsnw-key-management' ); ?>">
+
+	<label for="fsnw-apartment-notes"><?php esc_html_e( 'Notizen', 'fsnw-key-management' ); ?></label>
+	<textarea id="fsnw-apartment-notes" name="notes" rows="2"><?php echo esc_textarea( $apartment['notes'] ?? '' ); ?></textarea>
+	<?php
+};
+
+/**
+ * Rendert die Einzelschlüssel-Liste des Bund-Formulars.
+ *
+ * @param string[] $keys Vorbelegung (min. ein leeres Feld).
+ */
+$render_key_fields = static function ( array $keys ): void {
+	if ( empty( $keys ) ) {
+		$keys = array( '' );
+	}
+	?>
+	<span class="fsnw-km-label"><?php esc_html_e( 'Einzelschlüssel im Bund', 'fsnw-key-management' ); ?></span>
+	<div class="fsnw-bundle-keys">
+		<?php foreach ( $keys as $single_key ) : ?>
+			<div class="fsnw-key-row">
+				<input type="text" name="keys[]" value="<?php echo esc_attr( $single_key ); ?>" placeholder="<?php esc_attr_e( 'z. B. Wohnungstür', 'fsnw-key-management' ); ?>">
+				<button type="button" class="fsnw-remove-key" aria-label="<?php esc_attr_e( 'Schlüssel entfernen', 'fsnw-key-management' ); ?>">&times;</button>
+			</div>
+		<?php endforeach; ?>
+	</div>
+	<button type="button" class="fsnw-btn fsnw-btn--secondary fsnw-btn--small fsnw-add-key"><?php esc_html_e( '+ Schlüssel hinzufügen', 'fsnw-key-management' ); ?></button>
+	<?php
+};
 ?>
 <div class="fsnw-key-management fsnw-key-management--manage">
 	<h1><?php esc_html_e( 'Schlüsselverwaltung', 'fsnw-key-management' ); ?></h1>
@@ -73,157 +134,49 @@ $base_url = remove_query_arg( array( 'fsnw_edit_apartment', 'fsnw_edit_bundle', 
 		</div>
 	<?php endif; ?>
 
-	<?php if ( null !== $history_bundle && null !== $history ) : ?>
-		<div class="fsnw-card fsnw-km-form-card fsnw-fade-in">
-			<h2>
-				<?php
-				printf(
-					/* translators: %s: Bezeichnung des Schlüsselbunds. */
-					esc_html__( 'Historie: %s', 'fsnw-key-management' ),
-					esc_html( $history_bundle['label'] )
-				);
-				?>
-			</h2>
-			<?php if ( empty( $history ) ) : ?>
-				<p><?php esc_html_e( 'Noch keine Einträge.', 'fsnw-key-management' ); ?></p>
-			<?php else : ?>
-				<table class="fsnw-table">
-					<thead>
-						<tr>
-							<th><?php esc_html_e( 'Zeitpunkt', 'fsnw-key-management' ); ?></th>
-							<th><?php esc_html_e( 'Aktion', 'fsnw-key-management' ); ?></th>
-							<th><?php esc_html_e( 'Nutzer', 'fsnw-key-management' ); ?></th>
-							<th><?php esc_html_e( 'Details', 'fsnw-key-management' ); ?></th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php foreach ( $history as $entry ) : ?>
-							<?php $entry_user = $entry['user_id'] ? get_userdata( (int) $entry['user_id'] ) : null; ?>
-							<tr>
-								<td><?php echo esc_html( date_i18n( 'd.m.Y H:i', strtotime( $entry['created_at'] ) ) ); ?></td>
-								<td><?php echo esc_html( $entry['action'] ); ?></td>
-								<td><?php echo esc_html( $entry_user ? $entry_user->display_name : '—' ); ?></td>
-								<td>
-									<?php if ( empty( $entry['meta'] ) ) : ?>
-										&mdash;
-									<?php else : ?>
-										<code>
-											<?php
-											foreach ( $entry['meta'] as $meta_key => $meta_value ) {
-												echo esc_html( $meta_key . ': ' . ( is_scalar( $meta_value ) ? (string) $meta_value : wp_json_encode( $meta_value ) ) ) . '<br>';
-											}
-											?>
-										</code>
-									<?php endif; ?>
-								</td>
-							</tr>
-						<?php endforeach; ?>
-					</tbody>
-				</table>
-			<?php endif; ?>
-			<p><a class="fsnw-btn fsnw-btn--ghost" href="<?php echo esc_url( $base_url ); ?>"><?php esc_html_e( 'Historie schließen', 'fsnw-key-management' ); ?></a></p>
-		</div>
-	<?php endif; ?>
-
 	<div class="fsnw-km-forms">
 		<div class="fsnw-card fsnw-km-form-card fsnw-fade-in">
-			<h2>
-				<?php echo esc_html( null === $edit_apartment ? __( 'Wohnung anlegen', 'fsnw-key-management' ) : __( 'Wohnung bearbeiten', 'fsnw-key-management' ) ); ?>
-			</h2>
+			<h2><?php esc_html_e( 'Wohnung anlegen', 'fsnw-key-management' ); ?></h2>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<?php wp_nonce_field( 'fsnw_km_save_apartment' ); ?>
 				<input type="hidden" name="action" value="fsnw_km_save_apartment">
 				<input type="hidden" name="redirect_url" value="<?php echo esc_attr( $base_url ); ?>">
-				<input type="hidden" name="apartment_id" value="<?php echo esc_attr( (string) ( $edit_apartment['id'] ?? 0 ) ); ?>">
+				<input type="hidden" name="apartment_id" value="0">
 
-				<div class="fsnw-km-field-row">
-					<div class="fsnw-km-field-row__wide">
-						<label for="fsnw-apartment-street"><?php esc_html_e( 'Straße', 'fsnw-key-management' ); ?></label>
-						<input type="text" id="fsnw-apartment-street" name="street" required value="<?php echo esc_attr( $edit_apartment['street'] ?? '' ); ?>">
-					</div>
-					<div>
-						<label for="fsnw-apartment-house-number"><?php esc_html_e( 'Hausnr.', 'fsnw-key-management' ); ?></label>
-						<input type="text" id="fsnw-apartment-house-number" name="house_number" required value="<?php echo esc_attr( $edit_apartment['house_number'] ?? '' ); ?>">
-					</div>
-				</div>
-
-				<div class="fsnw-km-field-row">
-					<div>
-						<label for="fsnw-apartment-zip"><?php esc_html_e( 'PLZ', 'fsnw-key-management' ); ?></label>
-						<input type="text" id="fsnw-apartment-zip" name="zip" required value="<?php echo esc_attr( $edit_apartment['zip'] ?? '' ); ?>">
-					</div>
-					<div class="fsnw-km-field-row__wide">
-						<label for="fsnw-apartment-city"><?php esc_html_e( 'Ort', 'fsnw-key-management' ); ?></label>
-						<input type="text" id="fsnw-apartment-city" name="city" required value="<?php echo esc_attr( $edit_apartment['city'] ?? '' ); ?>">
-					</div>
-				</div>
-
-				<label for="fsnw-apartment-unit"><?php esc_html_e( 'Wohneinheit (optional)', 'fsnw-key-management' ); ?></label>
-				<input type="text" id="fsnw-apartment-unit" name="unit" value="<?php echo esc_attr( $edit_apartment['unit'] ?? '' ); ?>" placeholder="<?php esc_attr_e( 'z. B. WE 3 / 2. OG links', 'fsnw-key-management' ); ?>">
-
-				<label for="fsnw-apartment-notes"><?php esc_html_e( 'Notizen', 'fsnw-key-management' ); ?></label>
-				<textarea id="fsnw-apartment-notes" name="notes" rows="2"><?php echo esc_textarea( $edit_apartment['notes'] ?? '' ); ?></textarea>
-
-				<?php if ( null !== $edit_apartment ) : ?>
-					<label for="fsnw-apartment-status"><?php esc_html_e( 'Status', 'fsnw-key-management' ); ?></label>
-					<select id="fsnw-apartment-status" name="status">
-						<option value="active" <?php selected( $edit_apartment['status'], 'active' ); ?>><?php esc_html_e( 'Aktiv', 'fsnw-key-management' ); ?></option>
-						<option value="inactive" <?php selected( $edit_apartment['status'], 'inactive' ); ?>><?php esc_html_e( 'Inaktiv', 'fsnw-key-management' ); ?></option>
-					</select>
-				<?php endif; ?>
+				<?php $render_apartment_fields( null ); ?>
 
 				<div class="fsnw-km-form-actions">
-					<button type="submit" class="fsnw-btn fsnw-btn--primary"><?php esc_html_e( 'Speichern', 'fsnw-key-management' ); ?></button>
-					<?php if ( null !== $edit_apartment ) : ?>
-						<a class="fsnw-btn fsnw-btn--ghost" href="<?php echo esc_url( $base_url ); ?>"><?php esc_html_e( 'Abbrechen', 'fsnw-key-management' ); ?></a>
-					<?php endif; ?>
+					<button type="submit" class="fsnw-btn fsnw-btn--primary"><?php esc_html_e( 'Anlegen', 'fsnw-key-management' ); ?></button>
 				</div>
 			</form>
 		</div>
 
 		<div class="fsnw-card fsnw-km-form-card fsnw-fade-in">
-			<h2>
-				<?php echo esc_html( null === $edit_bundle ? __( 'Schlüsselbund anlegen', 'fsnw-key-management' ) : __( 'Schlüsselbund bearbeiten', 'fsnw-key-management' ) ); ?>
-			</h2>
+			<h2><?php esc_html_e( 'Schlüsselbund anlegen', 'fsnw-key-management' ); ?></h2>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<?php wp_nonce_field( 'fsnw_km_save_bundle' ); ?>
 				<input type="hidden" name="action" value="fsnw_km_save_bundle">
 				<input type="hidden" name="redirect_url" value="<?php echo esc_attr( $base_url ); ?>">
-				<input type="hidden" name="bundle_id" value="<?php echo esc_attr( (string) ( $edit_bundle['id'] ?? 0 ) ); ?>">
+				<input type="hidden" name="bundle_id" value="0">
 
-				<?php if ( null === $edit_bundle ) : ?>
-					<label for="fsnw-bundle-apartment"><?php esc_html_e( 'Wohnung', 'fsnw-key-management' ); ?></label>
-					<select id="fsnw-bundle-apartment" name="apartment_id" required>
-						<option value=""><?php esc_html_e( 'Bitte wählen …', 'fsnw-key-management' ); ?></option>
-						<?php foreach ( $apartments as $apartment ) : ?>
-							<option value="<?php echo esc_attr( (string) $apartment['id'] ); ?>"><?php echo esc_html( $apartment['label'] ); ?></option>
-						<?php endforeach; ?>
-					</select>
-				<?php endif; ?>
+				<label for="fsnw-bundle-apartment"><?php esc_html_e( 'Wohnung', 'fsnw-key-management' ); ?></label>
+				<select id="fsnw-bundle-apartment" name="apartment_id" required>
+					<option value=""><?php esc_html_e( 'Bitte wählen …', 'fsnw-key-management' ); ?></option>
+					<?php foreach ( $apartments as $apartment ) : ?>
+						<option value="<?php echo esc_attr( (string) $apartment['id'] ); ?>"><?php echo esc_html( $apartment['label'] ); ?></option>
+					<?php endforeach; ?>
+				</select>
 
 				<label for="fsnw-bundle-label"><?php esc_html_e( 'Bezeichnung (z. B. Bund A / Haken-Nr.)', 'fsnw-key-management' ); ?></label>
-				<input type="text" id="fsnw-bundle-label" name="label" required value="<?php echo esc_attr( $edit_bundle['label'] ?? '' ); ?>">
+				<input type="text" id="fsnw-bundle-label" name="label" required>
 
-				<span class="fsnw-km-label"><?php esc_html_e( 'Einzelschlüssel im Bund', 'fsnw-key-management' ); ?></span>
-				<div id="fsnw-bundle-keys">
-					<?php $bundle_keys = empty( $edit_bundle['keys_list'] ) ? array( '' ) : $edit_bundle['keys_list']; ?>
-					<?php foreach ( $bundle_keys as $bundle_key ) : ?>
-						<div class="fsnw-key-row">
-							<input type="text" name="keys[]" value="<?php echo esc_attr( $bundle_key ); ?>" placeholder="<?php esc_attr_e( 'z. B. Wohnungstür', 'fsnw-key-management' ); ?>">
-							<button type="button" class="fsnw-btn fsnw-btn--ghost fsnw-btn--small fsnw-remove-key" aria-label="<?php esc_attr_e( 'Schlüssel entfernen', 'fsnw-key-management' ); ?>">&times;</button>
-						</div>
-					<?php endforeach; ?>
-				</div>
-				<button type="button" id="fsnw-add-key" class="fsnw-btn fsnw-btn--secondary fsnw-btn--small"><?php esc_html_e( '+ Schlüssel hinzufügen', 'fsnw-key-management' ); ?></button>
+				<?php $render_key_fields( array( '' ) ); ?>
 
 				<label for="fsnw-bundle-notes"><?php esc_html_e( 'Notizen', 'fsnw-key-management' ); ?></label>
-				<textarea id="fsnw-bundle-notes" name="notes" rows="2"><?php echo esc_textarea( $edit_bundle['notes'] ?? '' ); ?></textarea>
+				<textarea id="fsnw-bundle-notes" name="notes" rows="2"></textarea>
 
 				<div class="fsnw-km-form-actions">
-					<button type="submit" class="fsnw-btn fsnw-btn--primary"><?php esc_html_e( 'Speichern', 'fsnw-key-management' ); ?></button>
-					<?php if ( null !== $edit_bundle ) : ?>
-						<a class="fsnw-btn fsnw-btn--ghost" href="<?php echo esc_url( $base_url ); ?>"><?php esc_html_e( 'Abbrechen', 'fsnw-key-management' ); ?></a>
-					<?php endif; ?>
+					<button type="submit" class="fsnw-btn fsnw-btn--primary"><?php esc_html_e( 'Anlegen', 'fsnw-key-management' ); ?></button>
 				</div>
 			</form>
 		</div>
@@ -346,4 +299,120 @@ $base_url = remove_query_arg( array( 'fsnw_edit_apartment', 'fsnw_edit_bundle', 
 			<?php endif; ?>
 		</div>
 	<?php endforeach; ?>
+
+	<?php if ( null !== $edit_apartment ) : ?>
+		<div class="fsnw-km-modal-overlay" data-close-url="<?php echo esc_attr( $base_url ); ?>">
+			<div class="fsnw-card fsnw-km-modal" role="dialog" aria-modal="true">
+				<div class="fsnw-km-modal__head">
+					<h2><?php esc_html_e( 'Wohnung bearbeiten', 'fsnw-key-management' ); ?></h2>
+					<a class="fsnw-km-modal__close" href="<?php echo esc_url( $base_url ); ?>" aria-label="<?php esc_attr_e( 'Schließen', 'fsnw-key-management' ); ?>">&times;</a>
+				</div>
+				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="fsnw-km-form-card">
+					<?php wp_nonce_field( 'fsnw_km_save_apartment' ); ?>
+					<input type="hidden" name="action" value="fsnw_km_save_apartment">
+					<input type="hidden" name="redirect_url" value="<?php echo esc_attr( $base_url ); ?>">
+					<input type="hidden" name="apartment_id" value="<?php echo esc_attr( (string) $edit_apartment['id'] ); ?>">
+
+					<?php $render_apartment_fields( $edit_apartment ); ?>
+
+					<label for="fsnw-apartment-status"><?php esc_html_e( 'Status', 'fsnw-key-management' ); ?></label>
+					<select id="fsnw-apartment-status" name="status">
+						<option value="active" <?php selected( $edit_apartment['status'], 'active' ); ?>><?php esc_html_e( 'Aktiv', 'fsnw-key-management' ); ?></option>
+						<option value="inactive" <?php selected( $edit_apartment['status'], 'inactive' ); ?>><?php esc_html_e( 'Inaktiv', 'fsnw-key-management' ); ?></option>
+					</select>
+
+					<div class="fsnw-km-form-actions">
+						<button type="submit" class="fsnw-btn fsnw-btn--primary"><?php esc_html_e( 'Speichern', 'fsnw-key-management' ); ?></button>
+						<a class="fsnw-btn fsnw-btn--ghost" href="<?php echo esc_url( $base_url ); ?>"><?php esc_html_e( 'Abbrechen', 'fsnw-key-management' ); ?></a>
+					</div>
+				</form>
+			</div>
+		</div>
+	<?php endif; ?>
+
+	<?php if ( null !== $edit_bundle ) : ?>
+		<div class="fsnw-km-modal-overlay" data-close-url="<?php echo esc_attr( $base_url ); ?>">
+			<div class="fsnw-card fsnw-km-modal" role="dialog" aria-modal="true">
+				<div class="fsnw-km-modal__head">
+					<h2><?php esc_html_e( 'Schlüsselbund bearbeiten', 'fsnw-key-management' ); ?></h2>
+					<a class="fsnw-km-modal__close" href="<?php echo esc_url( $base_url ); ?>" aria-label="<?php esc_attr_e( 'Schließen', 'fsnw-key-management' ); ?>">&times;</a>
+				</div>
+				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="fsnw-km-form-card">
+					<?php wp_nonce_field( 'fsnw_km_save_bundle' ); ?>
+					<input type="hidden" name="action" value="fsnw_km_save_bundle">
+					<input type="hidden" name="redirect_url" value="<?php echo esc_attr( $base_url ); ?>">
+					<input type="hidden" name="bundle_id" value="<?php echo esc_attr( (string) $edit_bundle['id'] ); ?>">
+
+					<label for="fsnw-bundle-label-edit"><?php esc_html_e( 'Bezeichnung (z. B. Bund A / Haken-Nr.)', 'fsnw-key-management' ); ?></label>
+					<input type="text" id="fsnw-bundle-label-edit" name="label" required value="<?php echo esc_attr( $edit_bundle['label'] ); ?>">
+
+					<?php $render_key_fields( $edit_bundle['keys_list'] ); ?>
+
+					<label for="fsnw-bundle-notes-edit"><?php esc_html_e( 'Notizen', 'fsnw-key-management' ); ?></label>
+					<textarea id="fsnw-bundle-notes-edit" name="notes" rows="2"><?php echo esc_textarea( $edit_bundle['notes'] ?? '' ); ?></textarea>
+
+					<div class="fsnw-km-form-actions">
+						<button type="submit" class="fsnw-btn fsnw-btn--primary"><?php esc_html_e( 'Speichern', 'fsnw-key-management' ); ?></button>
+						<a class="fsnw-btn fsnw-btn--ghost" href="<?php echo esc_url( $base_url ); ?>"><?php esc_html_e( 'Abbrechen', 'fsnw-key-management' ); ?></a>
+					</div>
+				</form>
+			</div>
+		</div>
+	<?php endif; ?>
+
+	<?php if ( null !== $history_bundle && null !== $history ) : ?>
+		<div class="fsnw-km-modal-overlay" data-close-url="<?php echo esc_attr( $base_url ); ?>">
+			<div class="fsnw-card fsnw-km-modal fsnw-km-modal--wide" role="dialog" aria-modal="true">
+				<div class="fsnw-km-modal__head">
+					<h2>
+						<?php
+						printf(
+							/* translators: %s: Bezeichnung des Schlüsselbunds. */
+							esc_html__( 'Historie: %s', 'fsnw-key-management' ),
+							esc_html( $history_bundle['label'] )
+						);
+						?>
+					</h2>
+					<a class="fsnw-km-modal__close" href="<?php echo esc_url( $base_url ); ?>" aria-label="<?php esc_attr_e( 'Schließen', 'fsnw-key-management' ); ?>">&times;</a>
+				</div>
+				<?php if ( empty( $history ) ) : ?>
+					<p><?php esc_html_e( 'Noch keine Einträge.', 'fsnw-key-management' ); ?></p>
+				<?php else : ?>
+					<table class="fsnw-table">
+						<thead>
+							<tr>
+								<th><?php esc_html_e( 'Zeitpunkt', 'fsnw-key-management' ); ?></th>
+								<th><?php esc_html_e( 'Aktion', 'fsnw-key-management' ); ?></th>
+								<th><?php esc_html_e( 'Nutzer', 'fsnw-key-management' ); ?></th>
+								<th><?php esc_html_e( 'Details', 'fsnw-key-management' ); ?></th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php foreach ( $history as $entry ) : ?>
+								<?php $entry_user = $entry['user_id'] ? get_userdata( (int) $entry['user_id'] ) : null; ?>
+								<tr>
+									<td><?php echo esc_html( date_i18n( 'd.m.Y H:i', strtotime( $entry['created_at'] ) ) ); ?></td>
+									<td><?php echo esc_html( $entry['action'] ); ?></td>
+									<td><?php echo esc_html( $entry_user ? $entry_user->display_name : '—' ); ?></td>
+									<td>
+										<?php if ( empty( $entry['meta'] ) ) : ?>
+											&mdash;
+										<?php else : ?>
+											<code>
+												<?php
+												foreach ( $entry['meta'] as $meta_key => $meta_value ) {
+													echo esc_html( $meta_key . ': ' . ( is_scalar( $meta_value ) ? (string) $meta_value : wp_json_encode( $meta_value ) ) ) . '<br>';
+												}
+												?>
+											</code>
+										<?php endif; ?>
+									</td>
+								</tr>
+							<?php endforeach; ?>
+						</tbody>
+					</table>
+				<?php endif; ?>
+			</div>
+		</div>
+	<?php endif; ?>
 </div>

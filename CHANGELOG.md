@@ -6,6 +6,18 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-07-13
+
+Changed
+
+- Einzelschlüssel-Felder im Bund-Formular vergrößert (44px Höhe, volle Breite)
+  und der Entfernen-Button ist jetzt eine deutlich sichtbare 44x44-Schaltfläche
+  mit Hover-Zustand statt eines winzigen "x".
+- Bearbeiten (Wohnung/Bund) und Historie öffnen jetzt als Popup (Modal mit
+  abgedunkeltem Hintergrund) statt die Anlege-Formulare oben vorzubelegen;
+  Schließen per X-Button, Abbrechen, Klick auf den Hintergrund oder Escape.
+  Die Formular-Karten oben sind dadurch reine Anlegen-Formulare.
+
 ## [1.0.1] - 2026-07-13
 
 Changed

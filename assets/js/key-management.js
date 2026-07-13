@@ -33,34 +33,53 @@
 			}, 4000 );
 		}
 
-		// Dynamische Einzelschlüssel-Felder im Bund-Formular.
-		var keysContainer = document.getElementById( 'fsnw-bundle-keys' );
-		var addKeyButton = document.getElementById( 'fsnw-add-key' );
+		// Dynamische Einzelschlüssel-Felder in den Bund-Formularen
+		// (Anlegen-Karte und Bearbeiten-Modal, daher klassenbasiert delegiert).
+		document.addEventListener( 'click', function ( event ) {
+			var addButton = event.target.closest( '.fsnw-add-key' );
 
-		if ( keysContainer && addKeyButton ) {
-			addKeyButton.addEventListener( 'click', function () {
-				var row = keysContainer.querySelector( '.fsnw-key-row' );
+			if ( addButton ) {
+				var form = addButton.closest( 'form' );
+				var container = form ? form.querySelector( '.fsnw-bundle-keys' ) : null;
+				var row = container ? container.querySelector( '.fsnw-key-row' ) : null;
 
-				if ( ! row ) {
-					return;
+				if ( row ) {
+					var clone = row.cloneNode( true );
+					clone.querySelector( 'input' ).value = '';
+					container.appendChild( clone );
+					clone.querySelector( 'input' ).focus();
 				}
 
-				var clone = row.cloneNode( true );
-				clone.querySelector( 'input' ).value = '';
-				keysContainer.appendChild( clone );
-			} );
+				return;
+			}
 
-			keysContainer.addEventListener( 'click', function ( event ) {
-				var button = event.target.closest( '.fsnw-remove-key' );
+			var removeButton = event.target.closest( '.fsnw-remove-key' );
 
-				if ( ! button ) {
-					return;
-				}
+			if ( removeButton ) {
+				var keysContainer = removeButton.closest( '.fsnw-bundle-keys' );
 
 				if ( keysContainer.querySelectorAll( '.fsnw-key-row' ).length > 1 ) {
-					button.closest( '.fsnw-key-row' ).remove();
+					removeButton.closest( '.fsnw-key-row' ).remove();
 				} else {
 					keysContainer.querySelector( '.fsnw-key-row input' ).value = '';
+				}
+			}
+		} );
+
+		// Bearbeiten-/Historie-Popup: Klick auf den Hintergrund oder Escape
+		// schließt das Modal (Navigation zurück zur Seite ohne GET-Parameter).
+		var overlay = document.querySelector( '.fsnw-km-modal-overlay' );
+
+		if ( overlay ) {
+			overlay.addEventListener( 'click', function ( event ) {
+				if ( event.target === overlay ) {
+					window.location.href = overlay.getAttribute( 'data-close-url' );
+				}
+			} );
+
+			document.addEventListener( 'keydown', function ( event ) {
+				if ( 'Escape' === event.key ) {
+					window.location.href = overlay.getAttribute( 'data-close-url' );
 				}
 			} );
 		}
