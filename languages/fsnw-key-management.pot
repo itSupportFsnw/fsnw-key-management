@@ -1,0 +1,457 @@
+# Copyright (C) 2026 freestyle Jugendhilfe gGmbh
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: FSNW Key Management 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/workspace\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-07-13T09:51:23+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: fsnw-key-management\n"
+
+#. Plugin Name of the plugin
+#: fsnw-key-management.php
+msgid "FSNW Key Management"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: fsnw-key-management.php
+msgid "https://github.com/itSupportFsnw/fsnw-key-management"
+msgstr ""
+
+#. Description of the plugin
+#: fsnw-key-management.php
+msgid "Schlüsselverwaltung für Klienten-Wohnungen: Inventar der Schlüsselbunde im zentralen Schlüsselkasten, Ausgabe an Mitarbeiter mit Tablet-Unterschrift (via FSNW Signature Kiosk), Rückgabe- und Verlust-Verwaltung."
+msgstr ""
+
+#. Author of the plugin
+#: fsnw-key-management.php
+msgid "freestyle Jugendhilfe gGmbh"
+msgstr ""
+
+#. Author URI of the plugin
+#: fsnw-key-management.php
+msgid "https://www.freestyle-jugendhilfe.de"
+msgstr ""
+
+#: frontend/class-frontend-controller.php:238
+msgid "Bitte eine Wohnung auswählen."
+msgstr ""
+
+#: frontend/class-frontend-controller.php:266
+msgid "Unbekannter Statuswechsel."
+msgstr ""
+
+#. translators: %s: Login-URL.
+#: frontend/class-frontend-controller.php:347
+#, php-format
+msgid "Bitte <a href=\"%s\">anmelden</a>, um die Schlüsselverwaltung zu nutzen."
+msgstr ""
+
+#: frontend/class-frontend-controller.php:353
+msgid "Keine Berechtigung für die Schlüsselverwaltung."
+msgstr ""
+
+#: frontend/class-frontend-controller.php:366
+msgid "Keine Berechtigung."
+msgstr ""
+
+#: fsnw-key-management.php:35
+msgid "FSNW Key Management: Composer-Abhängigkeiten fehlen. Bitte \"composer install\" im Plugin-Verzeichnis ausführen."
+msgstr ""
+
+#: includes/Integrations/class-signature-kiosk-integration.php:74
+msgid "FSNW Key Management benötigt das Plugin \"FSNW Signature Kiosk\" für die Ausgabe-Unterschrift. Bitte installieren und aktivieren – bis dahin ist keine Schlüsselausgabe möglich."
+msgstr ""
+
+#: includes/Services/class-apartment-service.php:50
+#: includes/Services/class-apartment-service.php:85
+msgid "Bitte eine Bezeichnung für die Wohnung angeben."
+msgstr ""
+
+#: includes/Services/class-apartment-service.php:79
+msgid "Wohnung nicht gefunden."
+msgstr ""
+
+#: includes/Services/class-bundle-service.php:65
+#: includes/Services/class-bundle-service.php:105
+msgid "Bitte eine Bezeichnung und mindestens einen Einzelschlüssel angeben."
+msgstr ""
+
+#: includes/Services/class-bundle-service.php:98
+#: includes/Services/class-bundle-service.php:136
+msgid "Schlüsselbund nicht gefunden."
+msgstr ""
+
+#: includes/Services/class-bundle-service.php:146
+msgid "Dieser Statuswechsel ist nicht zulässig (Bund ist möglicherweise gerade ausgegeben)."
+msgstr ""
+
+#: includes/Services/class-issue-service.php:106
+msgid "Wohnungskontrolle"
+msgstr ""
+
+#: includes/Services/class-issue-service.php:107
+msgid "Einzug (Bund kommt nicht zurück)"
+msgstr ""
+
+#: includes/Services/class-issue-service.php:108
+msgid "Sonstiges"
+msgstr ""
+
+#: includes/Services/class-issue-service.php:127
+msgid "Das Plugin \"FSNW Signature Kiosk\" ist nicht aktiv – Ausgabe nicht möglich."
+msgstr ""
+
+#: includes/Services/class-issue-service.php:132
+msgid "Unbekannter Ausgabe-Typ."
+msgstr ""
+
+#: includes/Services/class-issue-service.php:138
+msgid "Bitte einen Mitarbeiter auswählen."
+msgstr ""
+
+#: includes/Services/class-issue-service.php:144
+msgid "Dieser Schlüsselbund ist nicht verfügbar."
+msgstr ""
+
+#: includes/Services/class-issue-service.php:150
+msgid "Zugehörige Wohnung nicht gefunden."
+msgstr ""
+
+#: includes/Services/class-issue-service.php:155
+msgid "Das ist der letzte Bund im Schrank – Ausgabe nicht empfohlen. Bitte die Warnung bestätigen, um trotzdem auszugeben."
+msgstr ""
+
+#: includes/Services/class-issue-service.php:190
+msgid "Klient:"
+msgstr ""
+
+#: includes/Services/class-issue-service.php:192
+msgid "Typ:"
+msgstr ""
+
+#: includes/Services/class-issue-service.php:199
+#: templates/frontend/dispatch-page.php:27
+msgid "Schlüsselausgabe"
+msgstr ""
+
+#: includes/Services/class-issue-service.php:248
+msgid "Bei einer Einzug-Ausgabe ist keine Rückgabe vorgesehen."
+msgstr ""
+
+#: includes/Services/class-issue-service.php:356
+msgid "Diese Ausgabe ist nicht (mehr) in einem passenden Zustand."
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:30
+msgid "Erledigt."
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:38
+#: templates/frontend/manage-page.php:62
+msgid "Neuen Schlüssel anfertigen:"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:39
+#: templates/frontend/manage-page.php:63
+msgid "Für folgende Wohnungen sind weniger als 2 Schlüsselbunde vorhanden:"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:49
+msgid "Schlüsselbund ausgeben"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:52
+msgid "Aktuell hängt kein verfügbarer Schlüsselbund im Schrank."
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:59
+msgid "Schlüsselbund"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:61
+#: templates/frontend/dispatch-page.php:92
+#: templates/frontend/manage-page.php:178
+msgid "Bitte wählen …"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:83
+msgid "Achtung: Das ist der letzte Bund dieser Wohnung im Schrank – Ausgabe nicht empfohlen."
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:86
+msgid "Trotzdem ausgeben"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:90
+msgid "Mitarbeiter (Empfänger)"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:98
+msgid "Ausgabe-Typ"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:105
+msgid "Notiz (optional)"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:110
+msgid "Ausgeben – Unterschrift am Tablet anfordern"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:119
+msgid "Warten auf Unterschrift"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:123
+#: templates/frontend/dispatch-page.php:162
+#: templates/frontend/manage-page.php:274
+msgid "Bund"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:124
+#: templates/frontend/dispatch-page.php:163
+#: templates/frontend/manage-page.php:176
+msgid "Wohnung"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:125
+#: templates/frontend/dispatch-page.php:164
+msgid "Mitarbeiter"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:126
+#: templates/frontend/dispatch-page.php:165
+msgid "Typ"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:127
+#: templates/frontend/manage-page.php:94
+msgid "Aktion"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:143
+#: templates/frontend/manage-page.php:159
+#: templates/frontend/manage-page.php:206
+msgid "Abbrechen"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:154
+msgid "Draußen (Rückgabe offen)"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:157
+msgid "Aktuell sind keine Schlüsselbunde unterwegs."
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:166
+msgid "Seit"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:167
+#: templates/frontend/manage-page.php:277
+msgid "Aktionen"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:184
+msgid "Rückgabe"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:186
+msgid "Bund wirklich als verloren melden?"
+msgstr ""
+
+#: templates/frontend/dispatch-page.php:191
+#: templates/frontend/manage-page.php:29
+#: templates/frontend/manage-page.php:305
+msgid "Verloren"
+msgstr ""
+
+#: templates/frontend/manage-page.php:26
+msgid "Im Schrank"
+msgstr ""
+
+#: templates/frontend/manage-page.php:27
+msgid "Ausgegeben"
+msgstr ""
+
+#: templates/frontend/manage-page.php:28
+msgid "Dauerhaft vergeben"
+msgstr ""
+
+#: templates/frontend/manage-page.php:30
+msgid "Ausgemustert"
+msgstr ""
+
+#: templates/frontend/manage-page.php:51
+msgid "Schlüsselverwaltung"
+msgstr ""
+
+#: templates/frontend/manage-page.php:54
+msgid "Gespeichert."
+msgstr ""
+
+#: templates/frontend/manage-page.php:69
+msgid "vorhanden"
+msgstr ""
+
+#. translators: %s: Bezeichnung des Schlüsselbunds.
+#: templates/frontend/manage-page.php:82
+#, php-format
+msgid "Historie: %s"
+msgstr ""
+
+#: templates/frontend/manage-page.php:88
+msgid "Noch keine Einträge."
+msgstr ""
+
+#: templates/frontend/manage-page.php:93
+msgid "Zeitpunkt"
+msgstr ""
+
+#: templates/frontend/manage-page.php:95
+msgid "Nutzer"
+msgstr ""
+
+#: templates/frontend/manage-page.php:96
+msgid "Details"
+msgstr ""
+
+#: templates/frontend/manage-page.php:124
+msgid "Historie schließen"
+msgstr ""
+
+#: templates/frontend/manage-page.php:131
+msgid "Wohnung anlegen"
+msgstr ""
+
+#: templates/frontend/manage-page.php:131
+msgid "Wohnung bearbeiten"
+msgstr ""
+
+#: templates/frontend/manage-page.php:139
+msgid "Bezeichnung (Adresse / Wohnung)"
+msgstr ""
+
+#: templates/frontend/manage-page.php:142
+msgid "Klient"
+msgstr ""
+
+#: templates/frontend/manage-page.php:145
+#: templates/frontend/manage-page.php:200
+msgid "Notizen"
+msgstr ""
+
+#: templates/frontend/manage-page.php:149
+#: templates/frontend/manage-page.php:276
+msgid "Status"
+msgstr ""
+
+#: templates/frontend/manage-page.php:151
+msgid "Aktiv"
+msgstr ""
+
+#: templates/frontend/manage-page.php:152
+#: templates/frontend/manage-page.php:260
+msgid "Inaktiv"
+msgstr ""
+
+#: templates/frontend/manage-page.php:157
+#: templates/frontend/manage-page.php:204
+msgid "Speichern"
+msgstr ""
+
+#: templates/frontend/manage-page.php:167
+msgid "Schlüsselbund anlegen"
+msgstr ""
+
+#: templates/frontend/manage-page.php:167
+msgid "Schlüsselbund bearbeiten"
+msgstr ""
+
+#: templates/frontend/manage-page.php:185
+msgid "Bezeichnung (z. B. Bund A / Haken-Nr.)"
+msgstr ""
+
+#: templates/frontend/manage-page.php:188
+msgid "Einzelschlüssel im Bund"
+msgstr ""
+
+#: templates/frontend/manage-page.php:193
+msgid "z. B. Wohnungstür"
+msgstr ""
+
+#: templates/frontend/manage-page.php:194
+msgid "Schlüssel entfernen"
+msgstr ""
+
+#: templates/frontend/manage-page.php:198
+msgid "+ Schlüssel hinzufügen"
+msgstr ""
+
+#: templates/frontend/manage-page.php:213
+msgid "Inventar"
+msgstr ""
+
+#: templates/frontend/manage-page.php:216
+msgid "Noch keine Wohnungen angelegt."
+msgstr ""
+
+#. translators: %d: Anzahl.
+#: templates/frontend/manage-page.php:238
+#, php-format
+msgid "%d im Schrank"
+msgstr ""
+
+#. translators: %d: Anzahl.
+#: templates/frontend/manage-page.php:248
+#, php-format
+msgid "%d draußen"
+msgstr ""
+
+#: templates/frontend/manage-page.php:255
+msgid "Neuen Schlüssel anfertigen"
+msgstr ""
+
+#: templates/frontend/manage-page.php:257
+msgid "Nur noch 1 Bund im Schrank"
+msgstr ""
+
+#: templates/frontend/manage-page.php:263
+#: templates/frontend/manage-page.php:293
+msgid "Bearbeiten"
+msgstr ""
+
+#: templates/frontend/manage-page.php:269
+msgid "Noch keine Schlüsselbunde angelegt."
+msgstr ""
+
+#: templates/frontend/manage-page.php:275
+msgid "Einzelschlüssel"
+msgstr ""
+
+#: templates/frontend/manage-page.php:296
+msgid "Historie"
+msgstr ""
+
+#: templates/frontend/manage-page.php:299
+msgid "Bund wirklich als verloren markieren?"
+msgstr ""
+
+#: templates/frontend/manage-page.php:307
+msgid "Bund wirklich ausmustern?"
+msgstr ""
+
+#: templates/frontend/manage-page.php:313
+msgid "Ausmustern"
+msgstr ""
+
+#: templates/frontend/manage-page.php:322
+msgid "In den Schrank"
+msgstr ""
