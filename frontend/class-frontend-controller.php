@@ -10,6 +10,7 @@ namespace FsnwKeyManagement\Frontend;
 use FsnwKeyManagement\Includes\Services\ApartmentService;
 use FsnwKeyManagement\Includes\Services\BundleService;
 use FsnwKeyManagement\Includes\Services\InventoryService;
+use FsnwKeyManagement\Includes\Services\IssueService;
 use FsnwKeyManagement\Includes\Services\LogService;
 use FsnwKeyManagement\Includes\Support\Capabilities;
 
@@ -31,6 +32,10 @@ class FrontendController {
 		add_action( 'admin_post_fsnw_km_save_apartment', array( $this, 'handle_save_apartment' ) );
 		add_action( 'admin_post_fsnw_km_save_bundle', array( $this, 'handle_save_bundle' ) );
 		add_action( 'admin_post_fsnw_km_bundle_status', array( $this, 'handle_bundle_status' ) );
+		add_action( 'admin_post_fsnw_km_issue_start', array( $this, 'handle_issue_start' ) );
+		add_action( 'admin_post_fsnw_km_issue_abort', array( $this, 'handle_issue_abort' ) );
+		add_action( 'admin_post_fsnw_km_issue_return', array( $this, 'handle_issue_return' ) );
+		add_action( 'admin_post_fsnw_km_issue_lost', array( $this, 'handle_issue_lost' ) );
 	}
 
 	/**
@@ -38,6 +43,76 @@ class FrontendController {
 	 */
 	public function register_shortcodes(): void {
 		add_shortcode( 'wp_fsnw_key_manage', array( $this, 'render_manage_shortcode' ) );
+		add_shortcode( 'wp_fsnw_key_dispatch', array( $this, 'render_dispatch_shortcode' ) );
+	}
+
+	/**
+	 * [wp_fsnw_key_dispatch] - Ausgabe-Arbeitsplatz (Ausgabe, Abbruch, Rückgabe, Verlust).
+	 */
+	public function render_dispatch_shortcode(): string {
+		$gate = $this->access_gate();
+
+		if ( null !== $gate ) {
+			return $gate;
+		}
+
+		$apartment_service = new ApartmentService();
+		$bundle_service    = new BundleService();
+		$inventory_service = new InventoryService();
+		$issue_service     = new IssueService();
+
+		$apartments = $apartment_service->list( true );
+		$inventory  = $inventory_service->overview( $apartments );
+
+		// Verfügbare Bunde je (aktiver) Wohnung für das Ausgabe-Formular.
+		$available_by_apartment = array();
+		foreach ( $apartments as $apartment ) {
+			$available = array_filter(
+				$bundle_service->list_by_apartment( (int) $apartment['id'] ),
+				static function ( array $bundle ): bool {
+					return BundleService::STATUS_AVAILABLE === $bundle['status'];
+				}
+			);
+
+			if ( ! empty( $available ) ) {
+				$available_by_apartment[ (int) $apartment['id'] ] = array_values( $available );
+			}
+		}
+
+		$awaiting = $issue_service->list_enriched( IssueService::STATUS_AWAITING_SIGNATURE );
+		$out      = array_values(
+			array_filter(
+				$issue_service->list_enriched( IssueService::STATUS_ISSUED ),
+				static function ( array $issue ): bool {
+					// Einzug-Ausgaben (Bund handed_over) sind abgeschlossen und
+					// erscheinen nicht mehr in der "Draußen"-Liste.
+					return BundleService::STATUS_ISSUED === $issue['bundle_status'];
+				}
+			)
+		);
+
+		$employees = get_users(
+			array(
+				'orderby' => 'display_name',
+				'order'   => 'ASC',
+				'fields'  => array( 'ID', 'display_name' ),
+			)
+		);
+
+		$replacement_needed = array();
+		foreach ( $apartments as $apartment ) {
+			if ( ! empty( $inventory[ (int) $apartment['id'] ]['needs_replacement'] ) ) {
+				$replacement_needed[] = $apartment;
+			}
+		}
+
+		$type_labels = IssueService::type_labels();
+		$current_url = home_url( add_query_arg( null, null ) );
+
+		ob_start();
+		include FSNW_KEY_MANAGEMENT_PLUGIN_DIR . 'templates/frontend/dispatch-page.php';
+
+		return (string) ob_get_clean();
 	}
 
 	/**
@@ -193,6 +268,66 @@ class FrontendController {
 
 		try {
 			( new BundleService() )->change_status( $bundle_id, $target, $actions[ $target ] );
+		} catch ( \InvalidArgumentException $exception ) {
+			$this->redirect_back( array( 'fsnw_error' => $exception->getMessage() ) );
+		}
+
+		$this->redirect_back( array( 'fsnw_saved' => '1' ) );
+	}
+
+	/**
+	 * Startet eine Ausgabe (inkl. Kiosk-Signatur-Anforderung).
+	 */
+	public function handle_issue_start(): void {
+		$this->verify_request( 'fsnw_km_issue_start' );
+
+		try {
+			( new IssueService() )->start(
+				absint( $_POST['bundle_id'] ?? 0 ),
+				absint( $_POST['issued_to_user_id'] ?? 0 ),
+				sanitize_key( $_POST['issue_type'] ?? '' ),
+				sanitize_textarea_field( wp_unslash( $_POST['notes'] ?? '' ) ),
+				! empty( $_POST['confirm_last'] )
+			);
+		} catch ( \InvalidArgumentException $exception ) {
+			$this->redirect_back( array( 'fsnw_error' => $exception->getMessage() ) );
+		}
+
+		$this->redirect_back( array( 'fsnw_saved' => '1' ) );
+	}
+
+	/**
+	 * Bricht eine Ausgabe ab, solange noch nicht unterschrieben wurde.
+	 */
+	public function handle_issue_abort(): void {
+		$this->verify_request( 'fsnw_km_issue_abort' );
+		$this->run_issue_action( 'abort' );
+	}
+
+	/**
+	 * Vermerkt die Rückgabe eines Bundes.
+	 */
+	public function handle_issue_return(): void {
+		$this->verify_request( 'fsnw_km_issue_return' );
+		$this->run_issue_action( 'mark_returned' );
+	}
+
+	/**
+	 * Meldet einen ausgegebenen Bund als verloren.
+	 */
+	public function handle_issue_lost(): void {
+		$this->verify_request( 'fsnw_km_issue_lost' );
+		$this->run_issue_action( 'mark_lost' );
+	}
+
+	/**
+	 * Führt eine einfache Issue-Aktion (abort/mark_returned/mark_lost) aus.
+	 *
+	 * @param string $method Methodenname auf dem IssueService.
+	 */
+	private function run_issue_action( string $method ): void {
+		try {
+			( new IssueService() )->{$method}( absint( $_POST['issue_id'] ?? 0 ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce wurde in verify_request() geprüft.
 		} catch ( \InvalidArgumentException $exception ) {
 			$this->redirect_back( array( 'fsnw_error' => $exception->getMessage() ) );
 		}

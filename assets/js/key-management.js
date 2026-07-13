@@ -65,16 +65,37 @@
 			} );
 		}
 
-		// Ausgabe-Formular: Warn-Checkbox "letzter Bund" muss bewusst gesetzt werden.
+		// Ausgabe-Formular: Warnung "letzter Bund" nur zeigen, wenn der gewählte
+		// Bund der letzte verfügbare seiner Wohnung ist; die Checkbox muss dann
+		// bewusst gesetzt werden, bevor das Formular abgeschickt werden kann.
 		var issueForm = document.getElementById( 'fsnw-issue-form' );
+		var bundleSelect = document.getElementById( 'fsnw-issue-bundle' );
+		var warningBox = document.getElementById( 'fsnw-last-bundle-warning' );
+		var confirmBox = document.getElementById( 'fsnw-last-bundle-confirm' );
 
-		if ( issueForm ) {
+		if ( issueForm && bundleSelect && warningBox && confirmBox ) {
+			var updateWarning = function () {
+				var option = bundleSelect.options[ bundleSelect.selectedIndex ];
+				var isLast = option && '1' === option.getAttribute( 'data-last' );
+
+				warningBox.classList.toggle( 'fsnw-hidden', ! isLast );
+				warningBox.classList.remove( 'fsnw-shake' );
+
+				if ( ! isLast ) {
+					confirmBox.checked = false;
+				}
+			};
+
+			bundleSelect.addEventListener( 'change', updateWarning );
+			updateWarning();
+
 			issueForm.addEventListener( 'submit', function ( event ) {
-				var confirmBox = issueForm.querySelector( '#fsnw-last-bundle-confirm' );
-
-				if ( confirmBox && ! confirmBox.checked ) {
+				if ( ! warningBox.classList.contains( 'fsnw-hidden' ) && ! confirmBox.checked ) {
 					event.preventDefault();
-					confirmBox.closest( '.fsnw-last-bundle-warning' ).classList.add( 'fsnw-shake' );
+					warningBox.classList.remove( 'fsnw-shake' );
+					// Reflow erzwingen, damit die Animation erneut startet.
+					void warningBox.offsetWidth;
+					warningBox.classList.add( 'fsnw-shake' );
 				}
 			} );
 		}
