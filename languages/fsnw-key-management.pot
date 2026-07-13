@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: FSNW Key Management 1.0.0\n"
+"Project-Id-Version: FSNW Key Management 1.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/workspace\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-13T09:51:23+00:00\n"
+"POT-Creation-Date: 2026-07-13T10:07:43+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: fsnw-key-management\n"
@@ -39,25 +39,25 @@ msgstr ""
 msgid "https://www.freestyle-jugendhilfe.de"
 msgstr ""
 
-#: frontend/class-frontend-controller.php:238
+#: frontend/class-frontend-controller.php:243
 msgid "Bitte eine Wohnung auswählen."
 msgstr ""
 
-#: frontend/class-frontend-controller.php:266
+#: frontend/class-frontend-controller.php:271
 msgid "Unbekannter Statuswechsel."
 msgstr ""
 
 #. translators: %s: Login-URL.
-#: frontend/class-frontend-controller.php:347
+#: frontend/class-frontend-controller.php:352
 #, php-format
 msgid "Bitte <a href=\"%s\">anmelden</a>, um die Schlüsselverwaltung zu nutzen."
 msgstr ""
 
-#: frontend/class-frontend-controller.php:353
+#: frontend/class-frontend-controller.php:358
 msgid "Keine Berechtigung für die Schlüsselverwaltung."
 msgstr ""
 
-#: frontend/class-frontend-controller.php:366
+#: frontend/class-frontend-controller.php:371
 msgid "Keine Berechtigung."
 msgstr ""
 
@@ -69,13 +69,12 @@ msgstr ""
 msgid "FSNW Key Management benötigt das Plugin \"FSNW Signature Kiosk\" für die Ausgabe-Unterschrift. Bitte installieren und aktivieren – bis dahin ist keine Schlüsselausgabe möglich."
 msgstr ""
 
-#: includes/Services/class-apartment-service.php:50
-#: includes/Services/class-apartment-service.php:85
-msgid "Bitte eine Bezeichnung für die Wohnung angeben."
+#: includes/Services/class-apartment-service.php:75
+msgid "Wohnung nicht gefunden."
 msgstr ""
 
-#: includes/Services/class-apartment-service.php:79
-msgid "Wohnung nicht gefunden."
+#: includes/Services/class-apartment-service.php:111
+msgid "Bitte Straße, Hausnummer, PLZ und Ort angeben."
 msgstr ""
 
 #: includes/Services/class-bundle-service.php:65
@@ -177,7 +176,7 @@ msgstr ""
 
 #: templates/frontend/dispatch-page.php:61
 #: templates/frontend/dispatch-page.php:92
-#: templates/frontend/manage-page.php:178
+#: templates/frontend/manage-page.php:197
 msgid "Bitte wählen …"
 msgstr ""
 
@@ -211,13 +210,13 @@ msgstr ""
 
 #: templates/frontend/dispatch-page.php:123
 #: templates/frontend/dispatch-page.php:162
-#: templates/frontend/manage-page.php:274
+#: templates/frontend/manage-page.php:290
 msgid "Bund"
 msgstr ""
 
 #: templates/frontend/dispatch-page.php:124
 #: templates/frontend/dispatch-page.php:163
-#: templates/frontend/manage-page.php:176
+#: templates/frontend/manage-page.php:195
 msgid "Wohnung"
 msgstr ""
 
@@ -237,8 +236,8 @@ msgid "Aktion"
 msgstr ""
 
 #: templates/frontend/dispatch-page.php:143
-#: templates/frontend/manage-page.php:159
-#: templates/frontend/manage-page.php:206
+#: templates/frontend/manage-page.php:178
+#: templates/frontend/manage-page.php:225
 msgid "Abbrechen"
 msgstr ""
 
@@ -255,7 +254,7 @@ msgid "Seit"
 msgstr ""
 
 #: templates/frontend/dispatch-page.php:167
-#: templates/frontend/manage-page.php:277
+#: templates/frontend/manage-page.php:293
 msgid "Aktionen"
 msgstr ""
 
@@ -269,7 +268,7 @@ msgstr ""
 
 #: templates/frontend/dispatch-page.php:191
 #: templates/frontend/manage-page.php:29
-#: templates/frontend/manage-page.php:305
+#: templates/frontend/manage-page.php:321
 msgid "Verloren"
 msgstr ""
 
@@ -335,123 +334,139 @@ msgstr ""
 msgid "Wohnung bearbeiten"
 msgstr ""
 
-#: templates/frontend/manage-page.php:139
-msgid "Bezeichnung (Adresse / Wohnung)"
-msgstr ""
-
-#: templates/frontend/manage-page.php:142
-msgid "Klient"
+#: templates/frontend/manage-page.php:141
+msgid "Straße"
 msgstr ""
 
 #: templates/frontend/manage-page.php:145
-#: templates/frontend/manage-page.php:200
-msgid "Notizen"
-msgstr ""
-
-#: templates/frontend/manage-page.php:149
-#: templates/frontend/manage-page.php:276
-msgid "Status"
-msgstr ""
-
-#: templates/frontend/manage-page.php:151
-msgid "Aktiv"
+msgid "Hausnr."
 msgstr ""
 
 #: templates/frontend/manage-page.php:152
-#: templates/frontend/manage-page.php:260
+msgid "PLZ"
+msgstr ""
+
+#: templates/frontend/manage-page.php:156
+msgid "Ort"
+msgstr ""
+
+#: templates/frontend/manage-page.php:161
+msgid "Wohneinheit (optional)"
+msgstr ""
+
+#: templates/frontend/manage-page.php:162
+msgid "z. B. WE 3 / 2. OG links"
+msgstr ""
+
+#: templates/frontend/manage-page.php:164
+#: templates/frontend/manage-page.php:219
+msgid "Notizen"
+msgstr ""
+
+#: templates/frontend/manage-page.php:168
+#: templates/frontend/manage-page.php:292
+msgid "Status"
+msgstr ""
+
+#: templates/frontend/manage-page.php:170
+msgid "Aktiv"
+msgstr ""
+
+#: templates/frontend/manage-page.php:171
+#: templates/frontend/manage-page.php:276
 msgid "Inaktiv"
 msgstr ""
 
-#: templates/frontend/manage-page.php:157
-#: templates/frontend/manage-page.php:204
+#: templates/frontend/manage-page.php:176
+#: templates/frontend/manage-page.php:223
 msgid "Speichern"
 msgstr ""
 
-#: templates/frontend/manage-page.php:167
+#: templates/frontend/manage-page.php:186
 msgid "Schlüsselbund anlegen"
 msgstr ""
 
-#: templates/frontend/manage-page.php:167
+#: templates/frontend/manage-page.php:186
 msgid "Schlüsselbund bearbeiten"
 msgstr ""
 
-#: templates/frontend/manage-page.php:185
+#: templates/frontend/manage-page.php:204
 msgid "Bezeichnung (z. B. Bund A / Haken-Nr.)"
 msgstr ""
 
-#: templates/frontend/manage-page.php:188
+#: templates/frontend/manage-page.php:207
 msgid "Einzelschlüssel im Bund"
 msgstr ""
 
-#: templates/frontend/manage-page.php:193
+#: templates/frontend/manage-page.php:212
 msgid "z. B. Wohnungstür"
 msgstr ""
 
-#: templates/frontend/manage-page.php:194
+#: templates/frontend/manage-page.php:213
 msgid "Schlüssel entfernen"
 msgstr ""
 
-#: templates/frontend/manage-page.php:198
+#: templates/frontend/manage-page.php:217
 msgid "+ Schlüssel hinzufügen"
 msgstr ""
 
-#: templates/frontend/manage-page.php:213
+#: templates/frontend/manage-page.php:232
 msgid "Inventar"
 msgstr ""
 
-#: templates/frontend/manage-page.php:216
+#: templates/frontend/manage-page.php:235
 msgid "Noch keine Wohnungen angelegt."
 msgstr ""
 
 #. translators: %d: Anzahl.
-#: templates/frontend/manage-page.php:238
+#: templates/frontend/manage-page.php:254
 #, php-format
 msgid "%d im Schrank"
 msgstr ""
 
 #. translators: %d: Anzahl.
-#: templates/frontend/manage-page.php:248
+#: templates/frontend/manage-page.php:264
 #, php-format
 msgid "%d draußen"
 msgstr ""
 
-#: templates/frontend/manage-page.php:255
+#: templates/frontend/manage-page.php:271
 msgid "Neuen Schlüssel anfertigen"
 msgstr ""
 
-#: templates/frontend/manage-page.php:257
+#: templates/frontend/manage-page.php:273
 msgid "Nur noch 1 Bund im Schrank"
 msgstr ""
 
-#: templates/frontend/manage-page.php:263
-#: templates/frontend/manage-page.php:293
+#: templates/frontend/manage-page.php:279
+#: templates/frontend/manage-page.php:309
 msgid "Bearbeiten"
 msgstr ""
 
-#: templates/frontend/manage-page.php:269
+#: templates/frontend/manage-page.php:285
 msgid "Noch keine Schlüsselbunde angelegt."
 msgstr ""
 
-#: templates/frontend/manage-page.php:275
+#: templates/frontend/manage-page.php:291
 msgid "Einzelschlüssel"
 msgstr ""
 
-#: templates/frontend/manage-page.php:296
+#: templates/frontend/manage-page.php:312
 msgid "Historie"
 msgstr ""
 
-#: templates/frontend/manage-page.php:299
+#: templates/frontend/manage-page.php:315
 msgid "Bund wirklich als verloren markieren?"
 msgstr ""
 
-#: templates/frontend/manage-page.php:307
+#: templates/frontend/manage-page.php:323
 msgid "Bund wirklich ausmustern?"
 msgstr ""
 
-#: templates/frontend/manage-page.php:313
+#: templates/frontend/manage-page.php:329
 msgid "Ausmustern"
 msgstr ""
 
-#: templates/frontend/manage-page.php:322
+#: templates/frontend/manage-page.php:338
 msgid "In den Schrank"
 msgstr ""
