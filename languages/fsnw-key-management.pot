@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: FSNW Key Management 1.3.0\n"
+"Project-Id-Version: FSNW Key Management 1.4.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/workspace\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-13T12:08:15+00:00\n"
+"POT-Creation-Date: 2026-07-13T12:15:50+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: fsnw-key-management\n"
@@ -39,31 +39,54 @@ msgstr ""
 msgid "https://www.freestyle-jugendhilfe.de"
 msgstr ""
 
-#: admin/class-admin-controller.php:46
-#: admin/class-admin-controller.php:47
+#: admin/class-admin-controller.php:54
+#: admin/class-admin-controller.php:55
 #: templates/admin/import.php:13
 msgid "Schlüssel-Import"
 msgstr ""
 
-#: admin/class-admin-controller.php:79
+#: admin/class-admin-controller.php:63
+#: admin/class-admin-controller.php:64
+#: templates/admin/cleanup.php:14
+msgid "Schlüssel-Daten aufräumen"
+msgstr ""
+
+#. translators: 1: Anzahl Bunde, 2: Anzahl Ausgaben, 3: Anzahl Historie-Einträge.
+#: admin/class-admin-controller.php:102
+#, php-format
+msgid "Wohnung gelöscht (inkl. %1$d Bunde, %2$d Ausgaben, %3$d Historie-Einträge)."
+msgstr ""
+
+#. translators: 1: Anzahl Ausgaben, 2: Anzahl Historie-Einträge, 3: Anzahl Tage.
+#: admin/class-admin-controller.php:126
+#, php-format
+msgid "%1$d abgeschlossene Ausgaben und %2$d Historie-Einträge älter als %3$d Tage gelöscht."
+msgstr ""
+
+#: admin/class-admin-controller.php:142
+#: admin/class-admin-controller.php:189
 #: frontend/class-frontend-controller.php:444
 msgid "Keine Berechtigung."
 msgstr ""
 
+#: admin/class-admin-controller.php:148
+msgid "Bitte die Bestätigungs-Checkbox setzen."
+msgstr ""
+
 #. translators: %d: laufende Nummer des Schlüssels im Bund.
-#: admin/class-admin-controller.php:128
+#: admin/class-admin-controller.php:238
 #, php-format
 msgid "Schlüssel %d"
 msgstr ""
 
 #. translators: %d: laufende Nummer des Bundes.
-#: admin/class-admin-controller.php:138
+#: admin/class-admin-controller.php:248
 #, php-format
 msgid "Bund %d"
 msgstr ""
 
 #. translators: 1: Zeilennummer, 2: Fehlermeldung.
-#: admin/class-admin-controller.php:150
+#: admin/class-admin-controller.php:260
 #, php-format
 msgid "Zeile %1$d: %2$s"
 msgstr ""
@@ -101,6 +124,7 @@ msgid "FSNW Key Management benötigt das Plugin \"FSNW Signature Kiosk\" für di
 msgstr ""
 
 #: includes/Services/class-apartment-service.php:75
+#: includes/Services/class-cleanup-service.php:36
 msgid "Wohnung nicht gefunden."
 msgstr ""
 
@@ -196,6 +220,75 @@ msgstr ""
 msgid "Diese Ausgabe ist nicht (mehr) in einem passenden Zustand."
 msgstr ""
 
+#: templates/admin/cleanup.php:24
+msgid "Achtung:"
+msgstr ""
+
+#: templates/admin/cleanup.php:24
+msgid "Alle Löschungen hier sind endgültig und umgehen die normale Nachweis-Aufbewahrung. Nur für Testdaten und eindeutig veraltete Vorgänge verwenden."
+msgstr ""
+
+#: templates/admin/cleanup.php:27
+msgid "Wohnung komplett löschen (Testdaten)"
+msgstr ""
+
+#: templates/admin/cleanup.php:28
+msgid "Löscht die Wohnung inklusive aller Schlüsselbunde, Ausgaben und Historie-Einträge."
+msgstr ""
+
+#: templates/admin/cleanup.php:30
+msgid "Diese Wohnung mit allen Daten endgültig löschen?"
+msgstr ""
+
+#: templates/admin/cleanup.php:36
+#: templates/frontend/dispatch-page.php:135
+#: templates/frontend/dispatch-page.php:174
+#: templates/frontend/list-page.php:35
+msgid "Wohnung"
+msgstr ""
+
+#: templates/admin/cleanup.php:39
+msgid "Bitte wählen …"
+msgstr ""
+
+#: templates/admin/cleanup.php:47
+#: templates/admin/cleanup.php:78
+msgid "Bestätigung"
+msgstr ""
+
+#: templates/admin/cleanup.php:51
+msgid "Ja, diese Wohnung mit allen Daten endgültig löschen."
+msgstr ""
+
+#: templates/admin/cleanup.php:57
+msgid "Wohnung löschen"
+msgstr ""
+
+#: templates/admin/cleanup.php:62
+#: templates/admin/cleanup.php:88
+msgid "Alte Vorgänge löschen"
+msgstr ""
+
+#: templates/admin/cleanup.php:63
+msgid "Löscht abgeschlossene Ausgaben (zurückgegeben/abgebrochen) und Historie-Einträge, die älter als die angegebene Anzahl Tage sind. Wohnungen, Schlüsselbunde sowie Verlust- und Einzug-Ausgaben bleiben als Nachweis erhalten."
+msgstr ""
+
+#: templates/admin/cleanup.php:65
+msgid "Alte Vorgänge endgültig löschen?"
+msgstr ""
+
+#: templates/admin/cleanup.php:71
+msgid "Älter als (Tage)"
+msgstr ""
+
+#: templates/admin/cleanup.php:74
+msgid "Mindestens 30 Tage."
+msgstr ""
+
+#: templates/admin/cleanup.php:82
+msgid "Ja, alte Vorgänge endgültig löschen."
+msgstr ""
+
 #. translators: 1: Anzahl Wohnungen, 2: Anzahl Bunde.
 #: templates/admin/import.php:22
 #, php-format
@@ -257,6 +350,7 @@ msgid "Schlüsselbund (Wohnung suchen)"
 msgstr ""
 
 #: templates/frontend/dispatch-page.php:61
+#: templates/frontend/manage-page.php:202
 msgid "Straße, Ort oder Bund tippen …"
 msgstr ""
 
@@ -269,100 +363,94 @@ msgid "Trotzdem ausgeben"
 msgstr ""
 
 #: templates/frontend/dispatch-page.php:96
-msgid "Mitarbeiter (Empfänger)"
+msgid "Mitarbeiter (Empfänger) suchen"
 msgstr ""
 
 #: templates/frontend/dispatch-page.php:98
-msgid "Bitte wählen …"
+msgid "Namen tippen …"
 msgstr ""
 
-#: templates/frontend/dispatch-page.php:104
+#: templates/frontend/dispatch-page.php:109
 msgid "Ausgabe-Typ"
 msgstr ""
 
-#: templates/frontend/dispatch-page.php:111
+#: templates/frontend/dispatch-page.php:116
 msgid "Notiz (optional)"
 msgstr ""
 
-#: templates/frontend/dispatch-page.php:116
+#: templates/frontend/dispatch-page.php:121
 msgid "Ausgeben – Unterschrift am Tablet anfordern"
 msgstr ""
 
-#: templates/frontend/dispatch-page.php:125
+#: templates/frontend/dispatch-page.php:130
 msgid "Warten auf Unterschrift"
 msgstr ""
 
-#: templates/frontend/dispatch-page.php:129
-#: templates/frontend/dispatch-page.php:168
-#: templates/frontend/manage-page.php:259
-#: templates/frontend/manage-page.php:408
+#: templates/frontend/dispatch-page.php:134
+#: templates/frontend/dispatch-page.php:173
+#: templates/frontend/manage-page.php:274
+#: templates/frontend/manage-page.php:424
 msgid "Bund"
 msgstr ""
 
-#: templates/frontend/dispatch-page.php:130
-#: templates/frontend/dispatch-page.php:169
-#: templates/frontend/list-page.php:35
-msgid "Wohnung"
-msgstr ""
-
-#: templates/frontend/dispatch-page.php:131
-#: templates/frontend/dispatch-page.php:170
+#: templates/frontend/dispatch-page.php:136
+#: templates/frontend/dispatch-page.php:175
 msgid "Mitarbeiter"
 msgstr ""
 
-#: templates/frontend/dispatch-page.php:132
-#: templates/frontend/dispatch-page.php:171
+#: templates/frontend/dispatch-page.php:137
+#: templates/frontend/dispatch-page.php:176
 msgid "Typ"
 msgstr ""
 
-#: templates/frontend/dispatch-page.php:133
-#: templates/frontend/manage-page.php:409
-#: templates/frontend/manage-page.php:466
+#: templates/frontend/dispatch-page.php:138
+#: templates/frontend/manage-page.php:425
+#: templates/frontend/manage-page.php:482
 msgid "Aktion"
 msgstr ""
 
-#: templates/frontend/dispatch-page.php:149
-#: templates/frontend/manage-page.php:349
-#: templates/frontend/manage-page.php:379
+#: templates/frontend/dispatch-page.php:154
+#: templates/frontend/manage-page.php:365
+#: templates/frontend/manage-page.php:395
 msgid "Abbrechen"
 msgstr ""
 
-#: templates/frontend/dispatch-page.php:160
+#: templates/frontend/dispatch-page.php:165
 msgid "Draußen (Rückgabe offen)"
 msgstr ""
 
-#: templates/frontend/dispatch-page.php:163
+#: templates/frontend/dispatch-page.php:168
 msgid "Aktuell sind keine Schlüsselbunde unterwegs."
 msgstr ""
 
-#: templates/frontend/dispatch-page.php:172
+#: templates/frontend/dispatch-page.php:177
 msgid "Seit"
 msgstr ""
 
-#: templates/frontend/dispatch-page.php:173
-#: templates/frontend/manage-page.php:262
+#: templates/frontend/dispatch-page.php:178
+#: templates/frontend/manage-page.php:277
 msgid "Aktionen"
 msgstr ""
 
-#: templates/frontend/dispatch-page.php:190
+#: templates/frontend/dispatch-page.php:195
 msgid "Rückgabe"
 msgstr ""
 
-#: templates/frontend/dispatch-page.php:192
+#: templates/frontend/dispatch-page.php:197
 msgid "Bund dauerhaft an den Klienten übergeben? Der alte Bund des Klienten wird als Verlust ausgebucht."
 msgstr ""
 
-#: templates/frontend/dispatch-page.php:197
+#: templates/frontend/dispatch-page.php:202
 msgid "An Klient übergeben"
 msgstr ""
 
-#: templates/frontend/dispatch-page.php:199
+#: templates/frontend/dispatch-page.php:204
 msgid "Bund wirklich als verloren melden?"
 msgstr ""
 
-#: templates/frontend/dispatch-page.php:204
+#: templates/frontend/dispatch-page.php:209
 #: templates/frontend/manage-page.php:30
-#: templates/frontend/manage-page.php:297
+#: templates/frontend/manage-page.php:312
 msgid "Verloren"
 msgstr ""
 
@@ -439,7 +527,7 @@ msgstr ""
 
 #: templates/frontend/manage-page.php:91
 #: templates/frontend/manage-page.php:188
-#: templates/frontend/manage-page.php:374
+#: templates/frontend/manage-page.php:390
 msgid "Notizen"
 msgstr ""
 
@@ -493,7 +581,7 @@ msgid "Straße oder Ort tippen …"
 msgstr ""
 
 #: templates/frontend/manage-page.php:183
-#: templates/frontend/manage-page.php:369
+#: templates/frontend/manage-page.php:385
 msgid "Bezeichnung (z. B. Bund A / Haken-Nr.)"
 msgstr ""
 
@@ -502,125 +590,138 @@ msgid "Inventar"
 msgstr ""
 
 #: templates/frontend/manage-page.php:201
+msgid "Wohnung suchen"
+msgstr ""
+
+#: templates/frontend/manage-page.php:206
 msgid "Noch keine Wohnungen angelegt."
 msgstr ""
 
 #. translators: %d: Anzahl.
-#: templates/frontend/manage-page.php:220
+#: templates/frontend/manage-page.php:225
 #, php-format
 msgid "%d im Schrank"
 msgstr ""
 
 #. translators: %d: Anzahl.
-#: templates/frontend/manage-page.php:230
+#: templates/frontend/manage-page.php:235
 #, php-format
 msgid "%d draußen"
 msgstr ""
 
-#: templates/frontend/manage-page.php:237
+#: templates/frontend/manage-page.php:242
 msgid "Neuen Schlüssel anfertigen"
 msgstr ""
 
-#: templates/frontend/manage-page.php:239
+#: templates/frontend/manage-page.php:244
 msgid "Nur noch 1 Bund im Schrank"
 msgstr ""
 
-#: templates/frontend/manage-page.php:242
-#: templates/frontend/manage-page.php:344
+#: templates/frontend/manage-page.php:247
+#: templates/frontend/manage-page.php:360
 msgid "Inaktiv"
 msgstr ""
 
-#: templates/frontend/manage-page.php:245
-#: templates/frontend/manage-page.php:281
+#: templates/frontend/manage-page.php:250
+#: templates/frontend/manage-page.php:296
 msgid "Historie"
 msgstr ""
 
-#: templates/frontend/manage-page.php:248
-#: templates/frontend/manage-page.php:278
+#: templates/frontend/manage-page.php:253
+#: templates/frontend/manage-page.php:293
 msgid "Bearbeiten"
 msgstr ""
 
-#: templates/frontend/manage-page.php:254
-msgid "Noch keine Schlüsselbunde angelegt."
+#: templates/frontend/manage-page.php:259
+#: templates/frontend/manage-page.php:262
+msgid "Bunde anzeigen"
 msgstr ""
 
 #: templates/frontend/manage-page.php:260
+msgid "Bunde verbergen"
+msgstr ""
+
+#: templates/frontend/manage-page.php:269
+msgid "Noch keine Schlüsselbunde angelegt."
+msgstr ""
+
+#: templates/frontend/manage-page.php:275
 msgid "Einzelschlüssel"
 msgstr ""
 
-#: templates/frontend/manage-page.php:261
-#: templates/frontend/manage-page.php:341
+#: templates/frontend/manage-page.php:276
+#: templates/frontend/manage-page.php:357
 msgid "Status"
 msgstr ""
 
-#: templates/frontend/manage-page.php:288
+#: templates/frontend/manage-page.php:303
 msgid "Duplizieren"
 msgstr ""
 
-#: templates/frontend/manage-page.php:291
+#: templates/frontend/manage-page.php:306
 msgid "Bund wirklich als verloren markieren?"
 msgstr ""
 
-#: templates/frontend/manage-page.php:299
+#: templates/frontend/manage-page.php:314
 msgid "Bund wirklich ausmustern?"
 msgstr ""
 
-#: templates/frontend/manage-page.php:305
+#: templates/frontend/manage-page.php:320
 msgid "Ausmustern"
 msgstr ""
 
-#: templates/frontend/manage-page.php:314
+#: templates/frontend/manage-page.php:329
 msgid "In den Schrank"
 msgstr ""
 
-#: templates/frontend/manage-page.php:330
+#: templates/frontend/manage-page.php:346
 msgid "Wohnung bearbeiten"
 msgstr ""
 
-#: templates/frontend/manage-page.php:331
-#: templates/frontend/manage-page.php:361
-#: templates/frontend/manage-page.php:399
-#: templates/frontend/manage-page.php:457
+#: templates/frontend/manage-page.php:347
+#: templates/frontend/manage-page.php:377
+#: templates/frontend/manage-page.php:415
+#: templates/frontend/manage-page.php:473
 msgid "Schließen"
 msgstr ""
 
-#: templates/frontend/manage-page.php:343
+#: templates/frontend/manage-page.php:359
 msgid "Aktiv"
 msgstr ""
 
-#: templates/frontend/manage-page.php:348
-#: templates/frontend/manage-page.php:378
+#: templates/frontend/manage-page.php:364
+#: templates/frontend/manage-page.php:394
 msgid "Speichern"
 msgstr ""
 
-#: templates/frontend/manage-page.php:360
+#: templates/frontend/manage-page.php:376
 msgid "Schlüsselbund bearbeiten"
 msgstr ""
 
 #. translators: %s: Bezeichnung der Wohnung.
 #. translators: %s: Bezeichnung des Schlüsselbunds.
-#: templates/frontend/manage-page.php:394
-#: templates/frontend/manage-page.php:452
+#: templates/frontend/manage-page.php:410
+#: templates/frontend/manage-page.php:468
 #, php-format
 msgid "Historie: %s"
 msgstr ""
 
-#: templates/frontend/manage-page.php:402
-#: templates/frontend/manage-page.php:460
+#: templates/frontend/manage-page.php:418
+#: templates/frontend/manage-page.php:476
 msgid "Noch keine Einträge."
 msgstr ""
 
-#: templates/frontend/manage-page.php:407
-#: templates/frontend/manage-page.php:465
+#: templates/frontend/manage-page.php:423
+#: templates/frontend/manage-page.php:481
 msgid "Zeitpunkt"
 msgstr ""
 
-#: templates/frontend/manage-page.php:410
-#: templates/frontend/manage-page.php:467
+#: templates/frontend/manage-page.php:426
+#: templates/frontend/manage-page.php:483
 msgid "Nutzer"
 msgstr ""
 
-#: templates/frontend/manage-page.php:411
-#: templates/frontend/manage-page.php:468
+#: templates/frontend/manage-page.php:427
+#: templates/frontend/manage-page.php:484
 msgid "Details"
 msgstr ""
