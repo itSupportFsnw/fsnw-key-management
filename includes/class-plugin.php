@@ -44,6 +44,8 @@ class Plugin {
 		Activator::maybe_upgrade();
 
 		add_action( 'init', array( $this, 'load_textdomain' ) );
+
+		( new \FsnwKeyManagement\Frontend\FrontendController() )->init();
 	}
 
 	/**

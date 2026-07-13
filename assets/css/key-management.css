@@ -1,0 +1,192 @@
+/**
+ * Seiten-Styles der Schlüsselverwaltung (Verwaltungs- und Ausgabe-Seite).
+ * Baut auf tokens.css/base.css (Corporate-Design) auf.
+ */
+
+.fsnw-key-management {
+	background: var( --fsnw-gradient-hero );
+	border-radius: var( --fsnw-radius-lg );
+	padding: var( --fsnw-space-5 );
+	font-family: var( --fsnw-font );
+	color: var( --fsnw-text );
+}
+
+.fsnw-key-management .fsnw-hidden {
+	display: none !important;
+}
+
+/* Meldungen */
+
+.fsnw-key-management .fsnw-notice {
+	padding: var( --fsnw-space-3 ) var( --fsnw-space-4 );
+	border-radius: var( --fsnw-radius-sm );
+	margin-bottom: var( --fsnw-space-4 );
+	font-weight: 600;
+}
+
+.fsnw-key-management .fsnw-notice-success {
+	background: var( --fsnw-status-available-bg );
+	color: var( --fsnw-status-available );
+}
+
+.fsnw-key-management .fsnw-notice-error {
+	background: var( --fsnw-status-overdue-bg );
+	color: var( --fsnw-status-overdue );
+}
+
+/* Hinweis-Banner "Neuen Schlüssel anfertigen" */
+
+.fsnw-key-management .fsnw-replacement-banner {
+	background: var( --fsnw-status-overdue-bg );
+	color: var( --fsnw-status-overdue );
+	border: 1px solid var( --fsnw-status-overdue );
+	border-radius: var( --fsnw-radius-md );
+	padding: var( --fsnw-space-4 );
+	margin-bottom: var( --fsnw-space-5 );
+}
+
+.fsnw-key-management .fsnw-replacement-banner ul {
+	margin: var( --fsnw-space-2 ) 0 0 var( --fsnw-space-5 );
+}
+
+/* Formular-Karten */
+
+.fsnw-key-management .fsnw-km-forms {
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( 320px, 1fr ) );
+	gap: var( --fsnw-space-5 );
+	margin-bottom: var( --fsnw-space-6 );
+}
+
+.fsnw-key-management .fsnw-km-form-card label,
+.fsnw-key-management .fsnw-km-form-card .fsnw-km-label {
+	display: block;
+	font-size: var( --fsnw-font-size-small );
+	font-weight: 600;
+	color: var( --fsnw-text-muted );
+	margin: var( --fsnw-space-3 ) 0 var( --fsnw-space-1 );
+}
+
+.fsnw-key-management .fsnw-km-form-card input[type="text"],
+.fsnw-key-management .fsnw-km-form-card select,
+.fsnw-key-management .fsnw-km-form-card textarea {
+	width: 100%;
+	font-size: var( --fsnw-font-size-body );
+	padding: var( --fsnw-space-2 ) var( --fsnw-space-3 );
+	border: 1px solid var( --fsnw-border );
+	border-radius: var( --fsnw-radius-sm );
+	background: var( --fsnw-surface );
+	min-height: 40px;
+}
+
+.fsnw-key-management .fsnw-km-form-card input:focus-visible,
+.fsnw-key-management .fsnw-km-form-card select:focus-visible,
+.fsnw-key-management .fsnw-km-form-card textarea:focus-visible {
+	outline: none;
+	border-color: var( --fsnw-primary );
+	box-shadow: 0 0 0 3px var( --fsnw-primary-light-bg );
+}
+
+.fsnw-key-management .fsnw-km-form-actions {
+	display: flex;
+	gap: var( --fsnw-space-2 );
+	margin-top: var( --fsnw-space-4 );
+}
+
+/* Dynamische Einzelschlüssel-Zeilen */
+
+.fsnw-key-management .fsnw-key-row {
+	display: flex;
+	gap: var( --fsnw-space-2 );
+	align-items: center;
+	margin-bottom: var( --fsnw-space-2 );
+}
+
+.fsnw-key-management .fsnw-key-row input {
+	flex: 1;
+}
+
+/* Inventar */
+
+.fsnw-key-management .fsnw-km-apartment {
+	margin-bottom: var( --fsnw-space-5 );
+}
+
+.fsnw-key-management .fsnw-km-apartment__head {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: var( --fsnw-space-3 );
+	margin-bottom: var( --fsnw-space-4 );
+}
+
+.fsnw-key-management .fsnw-km-apartment__head h3 {
+	margin: 0;
+}
+
+.fsnw-key-management .fsnw-km-apartment__badges {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var( --fsnw-space-2 );
+}
+
+.fsnw-key-management .fsnw-km-muted {
+	color: var( --fsnw-text-muted );
+	font-size: var( --fsnw-font-size-small );
+	margin: var( --fsnw-space-1 ) 0 0;
+}
+
+.fsnw-key-management .fsnw-km-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var( --fsnw-space-1 );
+	align-items: center;
+}
+
+.fsnw-key-management .fsnw-km-inline-form {
+	display: inline-flex;
+	margin: 0;
+}
+
+/* Ausgabe-Seite: Warnbox "letzter Bund" */
+
+.fsnw-key-management .fsnw-last-bundle-warning {
+	background: var( --fsnw-status-underway-bg );
+	color: var( --fsnw-status-underway );
+	border: 1px solid var( --fsnw-status-underway );
+	border-radius: var( --fsnw-radius-sm );
+	padding: var( --fsnw-space-3 );
+	margin: var( --fsnw-space-3 ) 0;
+	font-weight: 600;
+}
+
+.fsnw-key-management .fsnw-last-bundle-warning label {
+	display: flex;
+	align-items: center;
+	gap: var( --fsnw-space-2 );
+	margin: var( --fsnw-space-2 ) 0 0;
+	color: inherit;
+}
+
+@keyframes fsnw-km-shake {
+	0%, 100% { transform: translateX( 0 ); }
+	25% { transform: translateX( -4px ); }
+	75% { transform: translateX( 4px ); }
+}
+
+.fsnw-key-management .fsnw-shake {
+	animation: fsnw-km-shake 300ms ease 2;
+}
+
+@media ( max-width: 600px ) {
+	.fsnw-key-management {
+		padding: var( --fsnw-space-3 );
+	}
+
+	.fsnw-key-management .fsnw-table {
+		display: block;
+		overflow-x: auto;
+	}
+}

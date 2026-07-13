@@ -6,6 +6,23 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-13
+
+Added
+
+- Verwaltungs-Seite als Frontend-Shortcode `[wp_fsnw_key_manage]` (Zugriff: Login +
+  `fsnw_manage_keys`): Wohnungen anlegen/bearbeiten (inkl. aktiv/inaktiv),
+  Schlüsselbunde anlegen/bearbeiten mit dynamischer Einzelschlüssel-Liste,
+  Inventar-Übersicht je Wohnung mit Zählwerten und Warn-Badges ("Nur noch 1 Bund
+  im Schrank", "Neuen Schlüssel anfertigen"), rotes Hinweis-Banner für alle
+  betroffenen Wohnungen, Bund-Aktionen Verloren/Ausmustern/In-den-Schrank
+  (Reaktivierung, z. B. wiedergefunden oder Ersatz angefertigt) und Historie je Bund.
+- Formular-Verarbeitung über admin_post-Handler mit Nonce/Capability-Prüfung und
+  kurzlebigen Erfolgs-/Fehlermeldungen (4s-Auto-Ausblenden, URL-Parameter werden
+  bereinigt).
+- Seiten-Styles im Corporate-Design (`key-management.css`), Vanilla-JS für
+  Meldungen und dynamische Schlüssel-Felder.
+
 ## [0.1.0] - 2026-07-13
 
 Added

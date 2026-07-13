@@ -1,0 +1,252 @@
+<?php
+/**
+ * Frontend-Controller: Shortcodes, Assets und Formular-Handler.
+ *
+ * @package FsnwKeyManagement\Frontend
+ */
+
+namespace FsnwKeyManagement\Frontend;
+
+use FsnwKeyManagement\Includes\Services\ApartmentService;
+use FsnwKeyManagement\Includes\Services\BundleService;
+use FsnwKeyManagement\Includes\Services\InventoryService;
+use FsnwKeyManagement\Includes\Services\LogService;
+use FsnwKeyManagement\Includes\Support\Capabilities;
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Registriert die beiden Frontend-Seiten (Verwaltung + Ausgabe) und
+ * verarbeitet deren Formulare über admin_post-Handler.
+ */
+class FrontendController {
+
+	/**
+	 * Registriert alle Frontend-Hooks.
+	 */
+	public function init(): void {
+		add_action( 'init', array( $this, 'register_shortcodes' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+
+		add_action( 'admin_post_fsnw_km_save_apartment', array( $this, 'handle_save_apartment' ) );
+		add_action( 'admin_post_fsnw_km_save_bundle', array( $this, 'handle_save_bundle' ) );
+		add_action( 'admin_post_fsnw_km_bundle_status', array( $this, 'handle_bundle_status' ) );
+	}
+
+	/**
+	 * Registriert die Shortcodes.
+	 */
+	public function register_shortcodes(): void {
+		add_shortcode( 'wp_fsnw_key_manage', array( $this, 'render_manage_shortcode' ) );
+	}
+
+	/**
+	 * [wp_fsnw_key_manage] - Verwaltungs-Seite (Wohnungen, Bunde, Inventar, Historie).
+	 */
+	public function render_manage_shortcode(): string {
+		$gate = $this->access_gate();
+
+		if ( null !== $gate ) {
+			return $gate;
+		}
+
+		$apartment_service = new ApartmentService();
+		$bundle_service    = new BundleService();
+		$inventory_service = new InventoryService();
+
+		$apartments = $apartment_service->list();
+		$inventory  = $inventory_service->overview( $apartments );
+
+		$bundles_by_apartment = array();
+		foreach ( $apartments as $apartment ) {
+			$bundles_by_apartment[ (int) $apartment['id'] ] = $bundle_service->list_by_apartment( (int) $apartment['id'] );
+		}
+
+		// Vorbelegung für Bearbeiten-Modus (per GET-Parameter angefordert).
+		$edit_apartment = null;
+		$edit_bundle    = null;
+		$history        = null;
+		$history_bundle = null;
+
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Nur lesende Vorbelegung, keine Zustandsänderung.
+		if ( ! empty( $_GET['fsnw_edit_apartment'] ) ) {
+			$edit_apartment = $apartment_service->find( absint( $_GET['fsnw_edit_apartment'] ) );
+		}
+
+		if ( ! empty( $_GET['fsnw_edit_bundle'] ) ) {
+			$edit_bundle = $bundle_service->find( absint( $_GET['fsnw_edit_bundle'] ) );
+		}
+
+		if ( ! empty( $_GET['fsnw_history'] ) ) {
+			$history_bundle = $bundle_service->find( absint( $_GET['fsnw_history'] ) );
+			$history        = null === $history_bundle ? null : ( new LogService() )->list_by_bundle( (int) $history_bundle['id'] );
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+		$current_url = home_url( add_query_arg( null, null ) );
+
+		ob_start();
+		include FSNW_KEY_MANAGEMENT_PLUGIN_DIR . 'templates/frontend/manage-page.php';
+
+		return (string) ob_get_clean();
+	}
+
+	/**
+	 * Lädt CSS/JS nur auf Seiten mit einem der Plugin-Shortcodes.
+	 */
+	public function enqueue_assets(): void {
+		$post = get_post();
+
+		if ( ! $post instanceof \WP_Post ) {
+			return;
+		}
+
+		if (
+			! has_shortcode( $post->post_content, 'wp_fsnw_key_manage' )
+			&& ! has_shortcode( $post->post_content, 'wp_fsnw_key_dispatch' )
+		) {
+			return;
+		}
+
+		wp_enqueue_style( 'fsnw-key-management-tokens', FSNW_KEY_MANAGEMENT_PLUGIN_URL . 'assets/css/tokens.css', array(), FSNW_KEY_MANAGEMENT_VERSION );
+		wp_enqueue_style( 'fsnw-key-management-base', FSNW_KEY_MANAGEMENT_PLUGIN_URL . 'assets/css/base.css', array( 'fsnw-key-management-tokens' ), FSNW_KEY_MANAGEMENT_VERSION );
+		wp_enqueue_style( 'fsnw-key-management', FSNW_KEY_MANAGEMENT_PLUGIN_URL . 'assets/css/key-management.css', array( 'fsnw-key-management-tokens', 'fsnw-key-management-base' ), FSNW_KEY_MANAGEMENT_VERSION );
+		wp_enqueue_script( 'fsnw-key-management', FSNW_KEY_MANAGEMENT_PLUGIN_URL . 'assets/js/key-management.js', array(), FSNW_KEY_MANAGEMENT_VERSION, true );
+	}
+
+	/**
+	 * Speichert eine Wohnung (anlegen oder bearbeiten).
+	 */
+	public function handle_save_apartment(): void {
+		$this->verify_request( 'fsnw_km_save_apartment' );
+
+		$apartment_id = absint( $_POST['apartment_id'] ?? 0 );
+		$label        = sanitize_text_field( wp_unslash( $_POST['label'] ?? '' ) );
+		$client_name  = sanitize_text_field( wp_unslash( $_POST['client_name'] ?? '' ) );
+		$notes        = sanitize_textarea_field( wp_unslash( $_POST['notes'] ?? '' ) );
+		$status       = sanitize_key( $_POST['status'] ?? ApartmentService::STATUS_ACTIVE );
+
+		try {
+			$service = new ApartmentService();
+
+			if ( $apartment_id > 0 ) {
+				$service->update( $apartment_id, $label, $client_name, $notes, $status );
+			} else {
+				$service->create( $label, $client_name, $notes );
+			}
+		} catch ( \InvalidArgumentException $exception ) {
+			$this->redirect_back( array( 'fsnw_error' => $exception->getMessage() ) );
+		}
+
+		$this->redirect_back( array( 'fsnw_saved' => '1' ) );
+	}
+
+	/**
+	 * Speichert einen Schlüsselbund (anlegen oder bearbeiten).
+	 */
+	public function handle_save_bundle(): void {
+		$this->verify_request( 'fsnw_km_save_bundle' );
+
+		$bundle_id    = absint( $_POST['bundle_id'] ?? 0 );
+		$apartment_id = absint( $_POST['apartment_id'] ?? 0 );
+		$label        = sanitize_text_field( wp_unslash( $_POST['label'] ?? '' ) );
+		$notes        = sanitize_textarea_field( wp_unslash( $_POST['notes'] ?? '' ) );
+		$keys         = array_map( 'sanitize_text_field', wp_unslash( (array) ( $_POST['keys'] ?? array() ) ) );
+
+		try {
+			$service = new BundleService();
+
+			if ( $bundle_id > 0 ) {
+				$service->update( $bundle_id, $label, $keys, $notes );
+			} else {
+				if ( null === ( new ApartmentService() )->find( $apartment_id ) ) {
+					throw new \InvalidArgumentException( esc_html__( 'Bitte eine Wohnung auswählen.', 'fsnw-key-management' ) );
+				}
+
+				$service->create( $apartment_id, $label, $keys, $notes );
+			}
+		} catch ( \InvalidArgumentException $exception ) {
+			$this->redirect_back( array( 'fsnw_error' => $exception->getMessage() ) );
+		}
+
+		$this->redirect_back( array( 'fsnw_saved' => '1' ) );
+	}
+
+	/**
+	 * Wechselt den Status eines Bundes (verloren / ausgemustert / reaktiviert).
+	 */
+	public function handle_bundle_status(): void {
+		$this->verify_request( 'fsnw_km_bundle_status' );
+
+		$bundle_id = absint( $_POST['bundle_id'] ?? 0 );
+		$target    = sanitize_key( $_POST['target_status'] ?? '' );
+
+		$actions = array(
+			BundleService::STATUS_LOST      => 'bundle_lost',
+			BundleService::STATUS_RETIRED   => 'bundle_retired',
+			BundleService::STATUS_AVAILABLE => 'bundle_reactivated',
+		);
+
+		if ( ! isset( $actions[ $target ] ) ) {
+			$this->redirect_back( array( 'fsnw_error' => __( 'Unbekannter Statuswechsel.', 'fsnw-key-management' ) ) );
+		}
+
+		try {
+			( new BundleService() )->change_status( $bundle_id, $target, $actions[ $target ] );
+		} catch ( \InvalidArgumentException $exception ) {
+			$this->redirect_back( array( 'fsnw_error' => $exception->getMessage() ) );
+		}
+
+		$this->redirect_back( array( 'fsnw_saved' => '1' ) );
+	}
+
+	/**
+	 * Gemeinsames Zugriffs-Gate der Frontend-Seiten: Login + Capability.
+	 *
+	 * @return string|null Hinweis-Markup bei fehlendem Zugriff, sonst null.
+	 */
+	private function access_gate(): ?string {
+		if ( ! is_user_logged_in() ) {
+			return '<p>' . sprintf(
+				/* translators: %s: Login-URL. */
+				wp_kses_post( __( 'Bitte <a href="%s">anmelden</a>, um die Schlüsselverwaltung zu nutzen.', 'fsnw-key-management' ) ),
+				esc_url( wp_login_url( home_url( add_query_arg( null, null ) ) ) )
+			) . '</p>';
+		}
+
+		if ( ! current_user_can( Capabilities::MANAGE_KEYS ) ) {
+			return '<p>' . esc_html__( 'Keine Berechtigung für die Schlüsselverwaltung.', 'fsnw-key-management' ) . '</p>';
+		}
+
+		return null;
+	}
+
+	/**
+	 * Prüft Capability und Nonce eines admin_post-Requests.
+	 *
+	 * @param string $action Nonce-Action.
+	 */
+	private function verify_request( string $action ): void {
+		if ( ! current_user_can( Capabilities::MANAGE_KEYS ) ) {
+			wp_die( esc_html__( 'Keine Berechtigung.', 'fsnw-key-management' ) );
+		}
+
+		check_admin_referer( $action );
+	}
+
+	/**
+	 * Leitet zurück zur aufrufenden Seite (redirect_url aus dem Formular) und
+	 * hängt Statusparameter an. Beendet die Ausführung.
+	 *
+	 * @param array<string, string> $args Statusparameter (fsnw_saved/fsnw_error).
+	 */
+	private function redirect_back( array $args ): void {
+		$redirect = isset( $_POST['redirect_url'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_url'] ) ) : home_url(); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce wurde in verify_request() geprüft.
+
+		// Alte Statusparameter entfernen, damit Meldungen nicht doppelt erscheinen.
+		$redirect = remove_query_arg( array( 'fsnw_saved', 'fsnw_error' ), $redirect );
+
+		wp_safe_redirect( add_query_arg( array_map( 'rawurlencode', $args ), $redirect ) );
+		exit;
+	}
+}
